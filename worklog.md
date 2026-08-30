@@ -231,3 +231,34 @@ Stage Summary:
 - Admin header: logo a 36px de altura, cabe en header de 64px, sin overflow ni overlap
 - Footer publico: logo a 48px, layout de 4 columnas limpio
 - Todos los headers y ubicaciones verificadas visualmente con VLM
+
+---
+Task ID: 8
+Agent: Main Orchestrator (Z.ai Code)
+Task: Limpiar base de datos (datos ficticios de clientes) y preparar el proyecto para subir a Vercel con Supabase y GitHub.
+
+Work Log:
+- Creado script prisma/clean.ts y ejecutado: 12 cotizaciones de prueba eliminadas, admin y matriz de precios mantenidos
+- Cambiado prisma/schema.prisma de SQLite a PostgreSQL (necesario para Vercel serverless - SQLite no funciona en serverless)
+- Creado prisma/seed-prod.ts: script de inicializacion para produccion que crea admin + matriz de precios + servicios adicionales
+- Actualizado package.json:
+  * Cambiado nombre a platinum-construction-cleaning
+  * build ahora ejecuta "prisma generate && next build"
+  * Anadido postinstall: "prisma generate" (auto-ejecuta en Vercel)
+  * start cambiado a "next start -p 3000" (estandar Vercel)
+  * Anadido db:seed script
+  * Removidas dependencias no usadas (@mdxeditor/editor, next-intl, next-themes, @reactuses/core, react-markdown, react-syntax-highlighter, z-ai-web-dev-sdk)
+- Actualizado src/lib/db.ts: optimizado para serverless (sin query logs en produccion, reutiliza instancia global)
+- Creado vercel.json con configuracion Next.js
+- Creado .env.example con variables DATABASE_URL, NEXTAUTH_SECRET, NEXTAUTH_URL
+- Creado DEPLOYMENT.md con instrucciones paso a paso (Supabase + GitHub + Vercel)
+- Verificado: lint limpio, dev server funciona, commit realizado
+- .gitignore ya cubre .env*, .next, node_modules, etc.
+
+Stage Summary:
+- Base de datos limpiada (12 cotizaciones de prueba eliminadas)
+- Schema cambiado a PostgreSQL para compatibilidad con Vercel/Supabase
+- Scripts de deploy y seed listos
+- Documentacion completa en DEPLOYMENT.md
+- Proyecto listo para subir a GitHub → Vercel + Supabase
+- El usuario necesita: 1) Crear proyecto en Supabase, 2) Subir repo a GitHub, 3) Conectar en Vercel con las env vars, 4) Ejecutar db:push y seed-prod.ts
