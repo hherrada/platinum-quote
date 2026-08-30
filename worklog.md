@@ -72,3 +72,39 @@ Stage Summary:
 - Todos los componentes actualizados (publico y admin) sin restos del esquema emerald/teal anterior
 - PDF profesional generado con logo embebido (247KB) en colores navy/platinum/amber
 - App verificada end-to-end con agent-browser + VLM: funcional y visualmente profesional
+
+---
+Task ID: 3
+Agent: Main Orchestrator (Z.ai Code)
+Task: Reemplazar el logo por la version sin fondo (transparente) y redisenar el PDF con nuevas secciones: bloque de contacto (Maria Roldan), exclusiones estandar, terminos y condiciones, y seccion de firma/next steps.
+
+Work Log:
+- Analizado el nuevo logo subido (LOGO PLATINUM.png): PNG 1200x375 RGBA con fondo transparente confirmado (366878 pixeles transparentes, 82 blancos, 83040 del texto metalico)
+- Procesado con sharp: platinum-logo.png (1200x374, 56.6KB, hasAlpha true), platinum-logo-small.png (400x125, 11.4KB), platinum-logo-pdf.png (600x188, 20.4KB)
+- Reescrito completamente el componente PDF (quote-pdf.tsx) con nueva estructura:
+  * HEADER: logo transparente + badge "STATE OF FLORIDA LICENSED & INSURED"
+  * CONTACT BLOCK destacado: caja con lado navy ("YOUR POINT OF CONTACT") y lado gris claro con Maria Roldan, Project Manager, (786) 512-7353
+  * CUSTOMER & PROJECT INFO: dos cards lado a lado
+  * ESTIMATED PRICE RANGE: caja destacada con borde navy
+  * PRICE BREAKDOWN TABLE: header navy, filas con totales
+  * IMPORTANT NOTICE: caja amber con disclaimer de inspeccion
+  * STANDARD EXCLUSIONS: lista de 3 exclusiones (dumpsters, exterior glass above 1st floor, painted/stained concrete)
+  * TERMS & CONDITIONS: 5 items (Validity 30 dias, Payment Terms 50% deposit, Scope of Work, Exclusions, Cancellation 24h)
+  * NEXT STEPS: caja navy con CTA para firmar
+  * SIGNATURE BOX: lineas para Authorized Signature, Date, Print Name
+  * FOOTER: navy con info de contacto
+- Optimizado el layout (padding, font sizes, margin) para que todo entre en una sola pagina
+- Verificado con VLM que el PDF final (1 pagina, 41KB):
+  * Logo transparente se integra limpiamente sobre el header navy (sin caja blanca)
+  * Badge "Licensed & Insured" visible
+  * Bloque de Maria Roldan prominente y legible
+  * Las 10 secciones presentes con jerarquia visual correcta
+  * Documento profesional y pulido
+- Verificado que el logo es genuinamente transparente (pixeles RGBA 0,0,0,0 en esquinas) componiendolo sobre navy puro
+
+Stage Summary:
+- Logo reemplazado por version transparente en todas las ubicaciones (header publico, hero, footer, login admin, header admin, sidebar admin, PDF)
+- PDF completamente redisenado en una sola pagina con flujo visual coherente:
+  Header (logo + licensed) -> Contact Block (Maria Roldan) -> Customer & Project -> Price Breakdown -> Important Notice -> Standard Exclusions -> Terms & Conditions -> Next Steps -> Signature -> Footer
+- Todos los textos solicitados copiados tal cual (Terms & Conditions estandar de industria USA, exclusiones especificas de limpieza post-construccion, CTA de firma)
+- App verificada: lint limpio, sin errores, PDF de 1 pagina profesional
