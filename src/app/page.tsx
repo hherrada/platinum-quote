@@ -39,7 +39,7 @@ export default function Home() {
             </Badge>
             <h1 className="text-balance text-4xl font-bold tracking-tight text-platinum-bright sm:text-5xl md:text-6xl">
               Spotless Results After{' '}
-              <span className="bg-gradient-to-r from-platinum-bright to-platinum bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-white via-platinum-bright to-white bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(232,236,240,0.35)]">
                 Construction
               </span>
             </h1>
