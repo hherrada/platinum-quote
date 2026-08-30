@@ -8,6 +8,7 @@ import {
   Settings2,
   LogOut,
   Loader2,
+  Phone,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/public/logo'
@@ -59,6 +60,21 @@ export default function AdminLayout({
             </span>
           </Link>
           <div className="flex items-center gap-3">
+            {/* Contacto directo Maria Roldan */}
+            <a
+              href="tel:+17865127353"
+              className="hidden items-center gap-2 rounded-lg border border-platinum/30 bg-white/5 px-3 py-1.5 text-platinum-bright transition-colors hover:bg-white/10 md:flex"
+            >
+              <Phone className="h-3.5 w-3.5" />
+              <span className="leading-tight">
+                <span className="block text-[9px] uppercase tracking-wide text-platinum">
+                  Project Manager
+                </span>
+                <span className="block text-xs font-semibold">
+                  Maria Roldan · (786) 512-7353
+                </span>
+              </span>
+            </a>
             <div className="hidden text-right text-xs sm:block">
               <p className="font-medium text-platinum-bright">{session.user?.name}</p>
               <p className="text-platinum">{session.user?.email}</p>

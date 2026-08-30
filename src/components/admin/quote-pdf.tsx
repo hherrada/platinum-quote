@@ -131,7 +131,6 @@ const styles = StyleSheet.create({
   // ===== Body =====
   body: {
     padding: 14,
-    paddingBottom: 28,
   },
   // ===== Contact Block destacado =====
   contactBlock: {
@@ -440,28 +439,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
-  // ===== Footer =====
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: NAVY,
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderTopColor: PLATINUM,
-  },
-  footerLeft: {
-    fontSize: 7,
-    color: PLATINUM,
-  },
-  footerRight: {
-    fontSize: 7,
-    color: PLATINUM_MID,
-  },
+  // (Pie de pagina eliminado por peticion del cliente - se veia mal en blanco)
 })
 
 function formatCurrency(value: number) {
@@ -740,16 +718,6 @@ export function QuotePDF({ data }: { data: QuotePDFData }) {
               </View>
             </View>
           </View>
-        </View>
-
-        {/* ===== FOOTER ===== */}
-        <View style={styles.footer}>
-          <Text style={styles.footerLeft}>
-            Platinum Construction Cleaning · Miami, FL · (305) 555-0192 · info@platinumcleaning.com
-          </Text>
-          <Text style={styles.footerRight}>
-            Quote #{data.quoteId.slice(-8).toUpperCase()} · Page 1 of 1
-          </Text>
         </View>
       </Page>
     </Document>

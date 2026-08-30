@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Logo } from '@/components/public/logo'
-import { Loader2, LogIn, ArrowLeft } from 'lucide-react'
+import { Loader2, LogIn, ArrowLeft, Phone } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AdminLoginPage() {
@@ -63,6 +63,14 @@ export default function AdminLoginPage() {
           <p className="text-sm text-platinum">
             Sign in to access the management dashboard
           </p>
+          {/* Contacto directo */}
+          <a
+            href="tel:+17865127353"
+            className="mt-4 inline-flex items-center gap-2 rounded-lg border border-platinum/30 bg-white/5 px-3 py-1.5 text-xs text-platinum-bright transition-colors hover:bg-white/10"
+          >
+            <Phone className="h-3.5 w-3.5" />
+            Maria Roldan · (786) 512-7353
+          </a>
         </div>
 
         <Card className="border-platinum/20 bg-white shadow-2xl">

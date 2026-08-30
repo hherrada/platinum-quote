@@ -108,3 +108,34 @@ Stage Summary:
   Header (logo + licensed) -> Contact Block (Maria Roldan) -> Customer & Project -> Price Breakdown -> Important Notice -> Standard Exclusions -> Terms & Conditions -> Next Steps -> Signature -> Footer
 - Todos los textos solicitados copiados tal cual (Terms & Conditions estandar de industria USA, exclusiones especificas de limpieza post-construccion, CTA de firma)
 - App verificada: lint limpio, sin errores, PDF de 1 pagina profesional
+
+---
+Task ID: 4
+Agent: Main Orchestrator (Z.ai Code)
+Task: Quitar el pie de pagina del PDF (se veia mal en blanco) y agregar el logo + telefono de Maria Roldan en la interfaz de usuario (publica y admin).
+
+Work Log:
+- Eliminado el footer del PDF completamente (estilos footer, footerLeft, footerRight y el <View> del footer en el render)
+- Restaurado el paddingBottom del body a 14 (ya no se necesita espacio para el footer)
+- Verificado PDF: 1 pagina, 41KB, termina limpio con el signature box (sin navy footer abajo)
+- Actualizado site-header.tsx (publico): anadido elemento de contacto con icono Phone, "Project Manager" + "Maria Roldan · (786) 512-7353" como tel: link, visible en desktop; version compacta en mobile
+- Actualizado site-footer.tsx (publico): redisenado a 4 columnas - Logo+descripcion+Licensed badge / "Your Point of Contact" con Maria Roldan + telefono + email / Services / Office (telefono y email genericos)
+- Actualizado admin/layout.tsx: anadido elemento de contacto Maria Roldan en el header navy (entre logo y user info), con icono Phone y tel: link
+- Actualizado admin/login/page.tsx: anadido elemento de contacto Maria Roldan debajo del titulo "Admin Portal"
+- Verificado con VLM:
+  * PDF: 1 pagina, sin footer, termina con signature box limpio
+  * Header publico: logo + contacto Maria Roldan + nav links
+  * Footer publico: seccion "Your Point of Contact" con Maria Roldan + telefono + Licensed badge + Office
+  * Login admin: logo + contacto Maria Roldan + form
+  * Header admin: logo + ADMIN badge + contacto Maria Roldan + user info + Sign Out
+- ESLint limpio, sin errores en dev log
+
+Stage Summary:
+- PDF: footer eliminado completamente, ahora termina limpio con el signature box (1 pagina, 41KB)
+- Logo + telefono de Maria Roldan (786) 512-7353 ahora visibles en todas las interfaces:
+  * Public header (desktop: pill completo, mobile: compacto)
+  * Public footer (seccion "Your Point of Contact")
+  * Admin login (debajo del titulo)
+  * Admin header (pill en el navbar)
+- Todos los telefonos son tel: links clickeables
+- Licensed & Insured badge anadido al footer publico
