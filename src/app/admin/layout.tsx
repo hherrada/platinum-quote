@@ -6,11 +6,11 @@ import {
   LayoutDashboard,
   FilePlus2,
   Settings2,
-  Sparkles,
   LogOut,
   Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Logo } from '@/components/public/logo'
 import { signOut } from 'next-auth/react'
 
 const navItems = [
@@ -28,7 +28,6 @@ export default function AdminLayout({
   const pathname = usePathname()
   const router = useRouter()
 
-  // En la pagina de login no mostramos el sidebar
   const isLoginPage = pathname === '/admin/login'
 
   if (isLoginPage) {
@@ -37,8 +36,8 @@ export default function AdminLayout({
 
   if (status === 'loading') {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      <div className="flex min-h-screen items-center justify-center bg-platinum-radial">
+        <Loader2 className="h-8 w-8 animate-spin text-platinum-bright" />
       </div>
     )
   }
@@ -49,25 +48,26 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted/20">
-      {/* Top bar */}
-      <header className="sticky top-0 z-40 border-b border-border/60 bg-background">
-        <div className="flex h-14 items-center justify-between px-4">
+    <div className="flex min-h-screen flex-col bg-secondary/20">
+      {/* Top bar - navy */}
+      <header className="sticky top-0 z-40 border-b border-platinum/10 bg-platinum-primary shadow-sm">
+        <div className="flex h-16 items-center justify-between px-4">
           <Link href="/admin" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
-              <Sparkles className="h-4 w-4" />
-            </div>
-            <span className="font-bold">Platinum Admin</span>
+            <Logo className="w-40" />
+            <span className="ml-2 hidden rounded-md border border-platinum/30 px-2 py-0.5 text-xs font-medium text-platinum-bright sm:inline">
+              ADMIN
+            </span>
           </Link>
           <div className="flex items-center gap-3">
             <div className="hidden text-right text-xs sm:block">
-              <p className="font-medium">{session.user?.name}</p>
-              <p className="text-muted-foreground">{session.user?.email}</p>
+              <p className="font-medium text-platinum-bright">{session.user?.name}</p>
+              <p className="text-platinum">{session.user?.email}</p>
             </div>
             <Button
               variant="outline"
               size="sm"
               onClick={() => signOut({ callbackUrl: '/admin/login' })}
+              className="border-platinum/30 bg-white/5 text-platinum-bright hover:bg-white/10 hover:text-platinum-bright"
             >
               <LogOut className="mr-1.5 h-4 w-4" /> Sign Out
             </Button>
@@ -76,8 +76,8 @@ export default function AdminLayout({
       </header>
 
       <div className="flex flex-1">
-        {/* Sidebar */}
-        <aside className="hidden w-60 shrink-0 border-r border-border/60 bg-background md:block">
+        {/* Sidebar - navy */}
+        <aside className="hidden w-60 shrink-0 border-r border-platinum/10 bg-platinum-primary md:block">
           <nav className="space-y-1 p-3">
             {navItems.map((item) => {
               const active =
@@ -89,8 +89,8 @@ export default function AdminLayout({
                   href={item.href}
                   className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     active
-                      ? 'bg-emerald-50 text-emerald-700'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      ? 'bg-white/15 text-platinum-bright'
+                      : 'text-platinum hover:bg-white/10 hover:text-platinum-bright'
                   }`}
                 >
                   <item.icon className="h-4 w-4" />
@@ -99,6 +99,12 @@ export default function AdminLayout({
               )
             })}
           </nav>
+          {/* Linea platinum en el fondo del sidebar */}
+          <div className="platinum-divider mx-3 mt-4" />
+          <div className="p-3">
+            <p className="text-xs text-platinum/60">Platinum Construction</p>
+            <p className="text-xs text-platinum/60">Cleaning · Florida</p>
+          </div>
         </aside>
 
         {/* Mobile nav */}
@@ -114,7 +120,7 @@ export default function AdminLayout({
                   href={item.href}
                   className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                     active
-                      ? 'bg-emerald-50 text-emerald-700'
+                      ? 'bg-secondary text-primary'
                       : 'text-muted-foreground hover:bg-muted'
                   }`}
                 >

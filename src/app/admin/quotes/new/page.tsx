@@ -193,7 +193,7 @@ export default function NewQuotePage() {
           <Card className="border-border/60">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Calculator className="h-5 w-5 text-emerald-600" /> Project Details
+                <Calculator className="h-5 w-5 text-primary" /> Project Details
               </CardTitle>
               <CardDescription>
                 Enter the project information to calculate the price range.
@@ -209,8 +209,8 @@ export default function NewQuotePage() {
                     onClick={() => setPropertyType('residential')}
                     className={`flex items-center gap-2 rounded-lg border-2 p-3 transition-all ${
                       propertyType === 'residential'
-                        ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
-                        : 'border-border hover:border-emerald-300'
+                        ? 'border-primary bg-secondary text-primary'
+                        : 'border-border hover:border-primary/50'
                     }`}
                   >
                     <Home className="h-4 w-4" />
@@ -221,8 +221,8 @@ export default function NewQuotePage() {
                     onClick={() => setPropertyType('commercial')}
                     className={`flex items-center gap-2 rounded-lg border-2 p-3 transition-all ${
                       propertyType === 'commercial'
-                        ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
-                        : 'border-border hover:border-emerald-300'
+                        ? 'border-primary bg-secondary text-primary'
+                        : 'border-border hover:border-primary/50'
                     }`}
                   >
                     <Building2 className="h-4 w-4" />
@@ -259,7 +259,7 @@ export default function NewQuotePage() {
                     <label
                       className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 p-2.5 text-sm transition-all ${
                         cleaningLevel === 'rough'
-                          ? 'border-emerald-500 bg-emerald-50'
+                          ? 'border-primary bg-secondary'
                           : 'border-border'
                       }`}
                     >
@@ -269,7 +269,7 @@ export default function NewQuotePage() {
                     <label
                       className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 p-2.5 text-sm transition-all ${
                         cleaningLevel === 'final'
-                          ? 'border-emerald-500 bg-emerald-50'
+                          ? 'border-primary bg-secondary'
                           : 'border-border'
                       }`}
                     >
@@ -283,7 +283,7 @@ export default function NewQuotePage() {
               <div className="grid gap-3 sm:grid-cols-2">
                 <label
                   className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 p-3 transition-all ${
-                    hasDebris ? 'border-emerald-500 bg-emerald-50' : 'border-border'
+                    hasDebris ? 'border-primary bg-secondary' : 'border-border'
                   }`}
                 >
                   <input
@@ -293,13 +293,13 @@ export default function NewQuotePage() {
                       setHasDebris(e.target.checked)
                       setEstimate(null)
                     }}
-                    className="h-4 w-4 accent-emerald-600"
+                    className="h-4 w-4 accent-primary"
                   />
                   <span className="text-sm font-medium">Debris Removal</span>
                 </label>
                 <label
                   className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 p-3 transition-all ${
-                    hasStickers ? 'border-emerald-500 bg-emerald-50' : 'border-border'
+                    hasStickers ? 'border-primary bg-secondary' : 'border-border'
                   }`}
                 >
                   <input
@@ -309,7 +309,7 @@ export default function NewQuotePage() {
                       setHasStickers(e.target.checked)
                       setEstimate(null)
                     }}
-                    className="h-4 w-4 accent-emerald-600"
+                    className="h-4 w-4 accent-primary"
                   />
                   <span className="text-sm font-medium">Window Stickers</span>
                 </label>
@@ -338,7 +338,7 @@ export default function NewQuotePage() {
           <Card className="border-border/60">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <User className="h-5 w-5 text-emerald-600" /> Customer Information
+                <User className="h-5 w-5 text-primary" /> Customer Information
               </CardTitle>
               <CardDescription>
                 Required for manual quotes and PDF generation.
@@ -408,14 +408,14 @@ export default function NewQuotePage() {
 
         {/* Columna derecha: resumen y acciones */}
         <div className="space-y-4">
-          <Card className="sticky top-20 border-emerald-200 bg-emerald-50/40">
+          <Card className="sticky top-20 border-primary/30 bg-secondary/30">
             <CardHeader>
               <CardTitle className="flex items-center justify-between text-lg">
                 <span className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-emerald-600" /> Summary
+                  <FileText className="h-5 w-5 text-primary" /> Summary
                 </span>
                 {estimate && (
-                  <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                  <Badge className="bg-primary text-primary-foreground hover:bg-primary">
                     Calculated
                   </Badge>
                 )}
@@ -424,9 +424,9 @@ export default function NewQuotePage() {
             <CardContent className="space-y-4">
               {estimate ? (
                 <>
-                  <div className="rounded-lg border border-emerald-200 bg-white p-4 text-center">
+                  <div className="rounded-lg border border-primary/20 bg-white p-4 text-center">
                     <p className="text-xs text-muted-foreground">Estimated Range</p>
-                    <p className="mt-1 text-2xl font-bold text-emerald-700">
+                    <p className="mt-1 text-2xl font-bold text-primary">
                       {formatCurrency(estimate.minPrice)} –{' '}
                       {formatCurrency(estimate.maxPrice)}
                     </p>
@@ -490,7 +490,7 @@ export default function NewQuotePage() {
               <Button
                 onClick={handleSave}
                 disabled={submitting || !estimate}
-                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                className="w-full bg-platinum-primary text-platinum-bright hover:opacity-90"
               >
                 {submitting ? (
                   <>

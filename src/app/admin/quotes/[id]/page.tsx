@@ -255,7 +255,7 @@ export default function QuoteDetailPage() {
           <Button
             onClick={handleDownloadPDF}
             disabled={downloading}
-            className="bg-emerald-600 hover:bg-emerald-700"
+            className="bg-platinum-primary text-platinum-bright hover:opacity-90"
           >
             {downloading ? (
               <>
@@ -285,13 +285,13 @@ export default function QuoteDetailPage() {
         {/* Columna principal */}
         <div className="space-y-6 lg:col-span-2">
           {/* Caja de precio */}
-          <Card className="border-emerald-200 bg-emerald-50/40">
+          <Card className="border-primary/30 bg-secondary/30">
             <CardContent className="p-6">
               <div className="flex flex-col items-center gap-2 text-center">
-                <p className="text-sm font-medium text-emerald-700">
+                <p className="text-sm font-medium text-primary">
                   ESTIMATED PRICE RANGE
                 </p>
-                <p className="text-4xl font-bold text-emerald-700">
+                <p className="text-4xl font-bold text-primary">
                   {formatCurrency(quote.minPrice)} –{' '}
                   {formatCurrency(quote.maxPrice)}
                 </p>
@@ -306,7 +306,7 @@ export default function QuoteDetailPage() {
           <Card className="border-border/60">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Home className="h-5 w-5 text-emerald-600" /> Project Details
+                <Home className="h-5 w-5 text-primary" /> Project Details
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -388,7 +388,7 @@ export default function QuoteDetailPage() {
           <Card className="border-border/60">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <User className="h-5 w-5 text-emerald-600" /> Customer
+                <User className="h-5 w-5 text-primary" /> Customer
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
@@ -437,7 +437,7 @@ export default function QuoteDetailPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex-1 text-emerald-600"
+                  className="flex-1 text-primary"
                   onClick={() => updateStatus('approved')}
                   disabled={quote.status === 'approved'}
                 >

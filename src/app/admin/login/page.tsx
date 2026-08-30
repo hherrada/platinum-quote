@@ -13,7 +13,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Sparkles, Loader2, LogIn, ArrowLeft } from 'lucide-react'
+import { Logo } from '@/components/public/logo'
+import { Loader2, LogIn, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default function AdminLoginPage() {
@@ -48,28 +49,26 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-muted/30 px-4 py-12">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-platinum-radial px-4 py-12">
       <Link
         href="/"
-        className="absolute left-4 top-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        className="absolute left-4 top-4 inline-flex items-center gap-1.5 text-sm text-platinum hover:text-platinum-bright"
       >
         <ArrowLeft className="h-4 w-4" /> Back to site
       </Link>
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
-            <Sparkles className="h-6 w-6" />
-          </div>
-          <h1 className="text-2xl font-bold">Platinum Admin</h1>
-          <p className="text-sm text-muted-foreground">
+          <Logo className="w-56 drop-shadow-xl" />
+          <h1 className="mt-6 text-2xl font-bold text-platinum-bright">Admin Portal</h1>
+          <p className="text-sm text-platinum">
             Sign in to access the management dashboard
           </p>
         </div>
 
-        <Card className="border-border/60 shadow-sm">
+        <Card className="border-platinum/20 bg-white shadow-2xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <LogIn className="h-5 w-5 text-emerald-600" /> Staff Login
+            <CardTitle className="flex items-center gap-2 text-lg text-primary">
+              <LogIn className="h-5 w-5 text-primary" /> Staff Login
             </CardTitle>
             <CardDescription>
               Enter your credentials to continue.
@@ -109,7 +108,7 @@ export default function AdminLoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                className="w-full bg-platinum-primary text-platinum-bright hover:opacity-90"
               >
                 {loading ? (
                   <>
@@ -120,8 +119,8 @@ export default function AdminLoginPage() {
                 )}
               </Button>
             </form>
-            <div className="mt-4 rounded-lg border border-dashed border-border bg-muted/50 p-3 text-xs text-muted-foreground">
-              <p className="font-medium text-foreground">Demo credentials:</p>
+            <div className="mt-4 rounded-lg border border-dashed border-border bg-secondary/30 p-3 text-xs text-muted-foreground">
+              <p className="font-medium text-primary">Demo credentials:</p>
               <p>Email: admin@platinumcleaning.com</p>
               <p>Password: admin123</p>
             </div>

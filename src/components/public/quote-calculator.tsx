@@ -60,18 +60,15 @@ export function QuoteCalculator() {
   const router = useRouter()
   const { toast } = useToast()
 
-  // --- Step 1: project data ---
   const [propertyType, setPropertyType] = useState<PropertyType>('residential')
   const [sqft, setSqft] = useState<string>('')
   const [cleaningLevel, setCleaningLevel] = useState<CleaningLevel>('final')
   const [hasDebris, setHasDebris] = useState<boolean>(false)
   const [hasStickers, setHasStickers] = useState<boolean>(false)
 
-  // --- Step 2: estimate result ---
   const [estimate, setEstimate] = useState<PriceRange | null>(null)
   const [calculating, setCalculating] = useState(false)
 
-  // --- Step 3: schedule inspection ---
   const [customerName, setCustomerName] = useState('')
   const [customerPhone, setCustomerPhone] = useState('')
   const [customerEmail, setCustomerEmail] = useState('')
@@ -112,7 +109,6 @@ export function QuoteCalculator() {
         title: 'Estimate ready',
         description: `Estimated range: ${formatCurrency(data.priceRange.minPrice)} - ${formatCurrency(data.priceRange.maxPrice)}`,
       })
-      // Scroll a la seccion de la estimacion
       setTimeout(() => {
         document.getElementById('estimate-section')?.scrollIntoView({ behavior: 'smooth' })
       }, 100)
@@ -139,8 +135,6 @@ export function QuoteCalculator() {
     }
     setSubmitting(true)
     try {
-      // Recrear la cotizacion con datos del cliente (la primera se creo sin cliente)
-      // En lugar de eso, actualizamos: creamos una nueva entrada completa
       const res = await fetch('/api/quotes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -194,10 +188,10 @@ export function QuoteCalculator() {
   return (
     <div className="space-y-6">
       {/* Formulario principal de cotizacion */}
-      <Card id="calculator" className="border-border/60 shadow-sm">
+      <Card id="calculator" className="border-border/60 shadow-lg">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Calculator className="h-5 w-5 text-emerald-600" />
+            <Calculator className="h-5 w-5 text-primary" />
             <CardTitle>Instant Estimate Calculator</CardTitle>
           </div>
           <CardDescription>
@@ -215,8 +209,8 @@ export function QuoteCalculator() {
                 onClick={() => setPropertyType('residential')}
                 className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all ${
                   propertyType === 'residential'
-                    ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
-                    : 'border-border hover:border-emerald-300'
+                    ? 'border-primary bg-secondary text-primary'
+                    : 'border-border hover:border-primary/50'
                 }`}
               >
                 <Home className="h-6 w-6" />
@@ -227,8 +221,8 @@ export function QuoteCalculator() {
                 onClick={() => setPropertyType('commercial')}
                 className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all ${
                   propertyType === 'commercial'
-                    ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
-                    : 'border-border hover:border-emerald-300'
+                    ? 'border-primary bg-secondary text-primary'
+                    : 'border-border hover:border-primary/50'
                 }`}
               >
                 <Building2 className="h-6 w-6" />
@@ -267,8 +261,8 @@ export function QuoteCalculator() {
                 htmlFor="rough"
                 className={`flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all ${
                   cleaningLevel === 'rough'
-                    ? 'border-emerald-500 bg-emerald-50'
-                    : 'border-border hover:border-emerald-300'
+                    ? 'border-primary bg-secondary'
+                    : 'border-border hover:border-primary/50'
                 }`}
               >
                 <RadioGroupItem value="rough" id="rough" className="mt-1" />
@@ -284,8 +278,8 @@ export function QuoteCalculator() {
                 htmlFor="final"
                 className={`flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all ${
                   cleaningLevel === 'final'
-                    ? 'border-emerald-500 bg-emerald-50'
-                    : 'border-border hover:border-emerald-300'
+                    ? 'border-primary bg-secondary'
+                    : 'border-border hover:border-primary/50'
                 }`}
               >
                 <RadioGroupItem value="final" id="final" className="mt-1" />
@@ -306,14 +300,14 @@ export function QuoteCalculator() {
             <div className="grid gap-3 sm:grid-cols-2">
               <label
                 className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition-all ${
-                  hasDebris ? 'border-emerald-500 bg-emerald-50' : 'border-border hover:border-emerald-300'
+                  hasDebris ? 'border-primary bg-secondary' : 'border-border hover:border-primary/50'
                 }`}
               >
                 <input
                   type="checkbox"
                   checked={hasDebris}
                   onChange={(e) => setHasDebris(e.target.checked)}
-                  className="h-4 w-4 accent-emerald-600"
+                  className="h-4 w-4 accent-primary"
                 />
                 <div>
                   <span className="block text-sm font-medium">Debris Removal</span>
@@ -324,14 +318,14 @@ export function QuoteCalculator() {
               </label>
               <label
                 className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 p-4 transition-all ${
-                  hasStickers ? 'border-emerald-500 bg-emerald-50' : 'border-border hover:border-emerald-300'
+                  hasStickers ? 'border-primary bg-secondary' : 'border-border hover:border-primary/50'
                 }`}
               >
                 <input
                   type="checkbox"
                   checked={hasStickers}
                   onChange={(e) => setHasStickers(e.target.checked)}
-                  className="h-4 w-4 accent-emerald-600"
+                  className="h-4 w-4 accent-primary"
                 />
                 <div>
                   <span className="block text-sm font-medium">Window Stickers</span>
@@ -346,7 +340,7 @@ export function QuoteCalculator() {
           <Button
             onClick={handleCalculate}
             disabled={calculating}
-            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+            className="w-full bg-platinum-primary text-platinum-bright hover:opacity-90"
             size="lg"
           >
             {calculating ? (
@@ -364,14 +358,14 @@ export function QuoteCalculator() {
 
       {/* Resultado de la estimacion */}
       {estimate && !saved && (
-        <Card id="estimate-section" className="border-emerald-200 bg-emerald-50/50 shadow-md">
+        <Card id="estimate-section" className="border-primary/30 bg-secondary/30 shadow-md">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-emerald-600" />
+                <ShieldCheck className="h-5 w-5 text-primary" />
                 <CardTitle>Your Estimated Price Range</CardTitle>
               </div>
-              <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+              <Badge className="bg-primary text-primary-foreground hover:bg-primary">
                 Estimate
               </Badge>
             </div>
@@ -382,11 +376,11 @@ export function QuoteCalculator() {
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Rango de precio principal */}
-            <div className="rounded-xl border border-emerald-200 bg-white p-6 text-center">
+            <div className="rounded-xl border border-primary/20 bg-white p-6 text-center">
               <p className="text-sm font-medium text-muted-foreground">
                 Estimated Range for {sqft} SQFT
               </p>
-              <p className="mt-2 text-4xl font-bold tracking-tight text-emerald-700 sm:text-5xl">
+              <p className="mt-2 text-4xl font-bold tracking-tight text-primary sm:text-5xl">
                 {formatCurrency(estimate.minPrice)}
                 <span className="mx-2 text-muted-foreground">–</span>
                 {formatCurrency(estimate.maxPrice)}
@@ -431,7 +425,7 @@ export function QuoteCalculator() {
                 )}
                 <div className="mt-2 flex items-center justify-between border-t border-border/60 pt-2">
                   <dt className="font-semibold">Total estimated range</dt>
-                  <dd className="font-bold tabular-nums text-emerald-700">
+                  <dd className="font-bold tabular-nums text-primary">
                     {formatCurrency(estimate.minPrice)} –{' '}
                     {formatCurrency(estimate.maxPrice)}
                   </dd>
@@ -440,7 +434,7 @@ export function QuoteCalculator() {
             </div>
 
             {/* Disclaimer legal */}
-            <Alert className="border-amber-200 bg-amber-50 text-amber-900">
+            <Alert className="border-amber-300 bg-amber-50 text-amber-900">
               <Info className="h-4 w-4" />
               <AlertDescription className="text-sm">
                 <strong>Legal Disclaimer:</strong> This is a referential estimate
@@ -453,7 +447,7 @@ export function QuoteCalculator() {
             {/* Formulario para agendar inspeccion */}
             <div className="space-y-4 rounded-xl border border-border/60 bg-white p-6">
               <div className="flex items-center gap-2">
-                <CalendarCheck className="h-5 w-5 text-emerald-600" />
+                <CalendarCheck className="h-5 w-5 text-primary" />
                 <h3 className="text-base font-semibold">Schedule Your Free Inspection</h3>
               </div>
               <p className="text-sm text-muted-foreground">
@@ -510,7 +504,7 @@ export function QuoteCalculator() {
               <Button
                 onClick={handleSchedule}
                 disabled={submitting}
-                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                className="w-full bg-platinum-primary text-platinum-bright hover:opacity-90"
                 size="lg"
               >
                 {submitting ? (
@@ -530,10 +524,10 @@ export function QuoteCalculator() {
 
       {/* Confirmacion */}
       {saved && (
-        <Card id="confirmation-section" className="border-emerald-200 bg-emerald-50/50">
+        <Card id="confirmation-section" className="border-primary/30 bg-secondary/30">
           <CardContent className="flex flex-col items-center gap-4 p-8 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-              <CalendarCheck className="h-8 w-8 text-emerald-600" />
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary">
+              <CalendarCheck className="h-8 w-8 text-primary-foreground" />
             </div>
             <div className="space-y-1">
               <h3 className="text-xl font-bold">Inspection Request Received!</h3>
@@ -545,7 +539,7 @@ export function QuoteCalculator() {
             </div>
             <div className="rounded-lg border border-border/60 bg-white px-6 py-3 text-sm">
               <p className="text-muted-foreground">Your estimated range</p>
-              <p className="text-lg font-bold text-emerald-700">
+              <p className="text-lg font-bold text-primary">
                 {formatCurrency(estimate!.minPrice)} –{' '}
                 {formatCurrency(estimate!.maxPrice)}
               </p>

@@ -1,5 +1,5 @@
 // Componente de documento PDF profesional para cotizaciones
-// Usa @react-pdf/renderer. El contenido esta en INGLES.
+// Usa @react-pdf/renderer. Colores: Navy (#1A2332) + Platinum (#C0C5CD) + Blanco.
 import {
   Document,
   Page,
@@ -7,7 +7,10 @@ import {
   View,
   StyleSheet,
   Font,
+  Image,
 } from '@react-pdf/renderer'
+import fs from 'fs'
+import path from 'path'
 
 // Registrar fuentes (usamos Helvetica que viene por defecto en PDF)
 Font.registerHyphenationCallback((word) => [word])
@@ -39,6 +42,18 @@ interface QuotePDFData {
   }
 }
 
+// Cargar el logo como base64 para embeberlo en el PDF
+const logoPath = path.join(process.cwd(), 'public', 'platinum-logo.png')
+let logoBase64: string | null = null
+try {
+  if (fs.existsSync(logoPath)) {
+    const buf = fs.readFileSync(logoPath)
+    logoBase64 = `data:image/png;base64,${buf.toString('base64')}`
+  }
+} catch (e) {
+  console.warn('No se pudo cargar el logo para PDF:', e)
+}
+
 const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
@@ -46,36 +61,29 @@ const styles = StyleSheet.create({
     padding: 0,
     fontFamily: 'Helvetica',
     fontSize: 10,
-    color: '#1f2937',
+    color: '#1A2332',
   },
-  // Header con banda de color
+  // Header con fondo navy oscuro
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#047857',
+    backgroundColor: '#1A2332',
     padding: 24,
+    borderBottomWidth: 2,
+    borderBottomColor: '#C0C5CD',
   },
-  logoBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 8,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+  logoImage: {
+    width: 200,
+    height: 62,
     marginRight: 14,
   },
-  logoText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#047857',
-  },
   headerTitle: {
-    color: '#FFFFFF',
-    fontSize: 16,
+    color: '#E8ECF0',
+    fontSize: 14,
     fontWeight: 'bold',
   },
   headerSubtitle: {
-    color: '#a7f3d0',
+    color: '#9CA3AF',
     fontSize: 9,
     marginTop: 2,
   },
@@ -84,12 +92,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   quoteLabel: {
-    color: '#a7f3d0',
+    color: '#9CA3AF',
     fontSize: 8,
     letterSpacing: 1,
   },
   quoteNumber: {
-    color: '#FFFFFF',
+    color: '#E8ECF0',
     fontSize: 12,
     fontWeight: 'bold',
     marginTop: 2,
@@ -101,7 +109,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#047857',
+    color: '#1A2332',
     marginBottom: 8,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -115,7 +123,7 @@ const styles = StyleSheet.create({
   infoCard: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#C0C5CD',
     borderRadius: 6,
     padding: 12,
   },
@@ -125,20 +133,20 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 8,
-    color: '#6b7280',
+    color: '#6B7280',
     width: 80,
   },
   infoValue: {
     fontSize: 9,
-    color: '#111827',
+    color: '#1A2332',
     fontWeight: 'medium',
     flex: 1,
   },
-  // Caja de precio destacada
+  // Caja de precio destacada con acentos platinum
   priceBox: {
-    backgroundColor: '#ecfdf5',
-    borderWidth: 1.5,
-    borderColor: '#047857',
+    backgroundColor: '#F4F6F8',
+    borderWidth: 2,
+    borderColor: '#1A2332',
     borderRadius: 8,
     padding: 20,
     alignItems: 'center',
@@ -146,38 +154,37 @@ const styles = StyleSheet.create({
   },
   priceLabel: {
     fontSize: 10,
-    color: '#047857',
+    color: '#1A2332',
     marginBottom: 6,
+    letterSpacing: 1,
   },
   priceValue: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#065f46',
+    color: '#1A2332',
   },
   priceRange: {
     fontSize: 10,
-    color: '#6b7280',
+    color: '#6B7280',
     marginTop: 4,
   },
   // Tabla de desglose
   table: {
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#C0C5CD',
     borderRadius: 6,
     marginBottom: 20,
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#f9fafb',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    backgroundColor: '#1A2332',
     paddingVertical: 8,
     paddingHorizontal: 12,
   },
   tableHeaderText: {
     fontSize: 8,
     fontWeight: 'bold',
-    color: '#6b7280',
+    color: '#E8ECF0',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -186,17 +193,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    borderBottomColor: '#E8ECF0',
   },
   colDesc: {
     flex: 2,
     fontSize: 9,
-    color: '#374151',
+    color: '#1A2332',
   },
   colAmount: {
     flex: 1,
     fontSize: 9,
-    color: '#111827',
+    color: '#1A2332',
     fontWeight: 'medium',
     textAlign: 'right',
   },
@@ -204,13 +211,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 10,
     paddingHorizontal: 12,
-    backgroundColor: '#ecfdf5',
+    backgroundColor: '#F4F6F8',
   },
   // Disclaimer
   disclaimerBox: {
-    backgroundColor: '#fffbeb',
+    backgroundColor: '#FFF8E7',
     borderWidth: 1,
-    borderColor: '#fcd34d',
+    borderColor: '#D4A017',
     borderRadius: 6,
     padding: 12,
     marginBottom: 20,
@@ -218,33 +225,35 @@ const styles = StyleSheet.create({
   disclaimerTitle: {
     fontSize: 9,
     fontWeight: 'bold',
-    color: '#92400e',
+    color: '#7A5C00',
     marginBottom: 4,
   },
   disclaimerText: {
     fontSize: 8,
-    color: '#78350f',
+    color: '#5A4500',
     lineHeight: 1.4,
   },
-  // Footer
+  // Footer con fondo navy
   footer: {
     position: 'absolute',
-    bottom: 24,
-    left: 24,
-    right: 24,
-    borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-    paddingTop: 10,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#1A2332',
+    paddingVertical: 10,
+    paddingHorizontal: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderTopColor: '#C0C5CD',
   },
   footerLeft: {
     fontSize: 8,
-    color: '#6b7280',
+    color: '#C0C5CD',
   },
   footerRight: {
     fontSize: 8,
-    color: '#6b7280',
+    color: '#9CA3AF',
   },
 })
 
@@ -273,23 +282,23 @@ export function QuotePDF({ data }: { data: QuotePDFData }) {
       subject="Post-Construction Cleaning Quote"
     >
       <Page size="LETTER" style={styles.page}>
-        {/* Header */}
+        {/* Header con logo y fondo navy */}
         <View style={styles.header}>
-          <View style={styles.logoBox}>
-            <Text style={styles.logoText}>P</Text>
-          </View>
-          <View>
-            <Text style={styles.headerTitle}>Platinum Construction Cleaning</Text>
-            <Text style={styles.headerSubtitle}>
-              Post-Construction Cleaning Services · Florida
-            </Text>
-          </View>
+          {logoBase64 ? (
+            // eslint-disable-next-line jsx-a11y/alt-text
+            <Image style={styles.logoImage} src={logoBase64} />
+          ) : (
+            <View style={{ marginRight: 14 }}>
+              <Text style={styles.headerTitle}>PLATINUM</Text>
+              <Text style={styles.headerSubtitle}>CONSTRUCTION CLEANING</Text>
+            </View>
+          )}
           <View style={styles.headerRight}>
             <Text style={styles.quoteLabel}>QUOTE</Text>
             <Text style={styles.quoteNumber}>
               #{data.quoteId.slice(-8).toUpperCase()}
             </Text>
-            <Text style={styles.headerSubtitle}>
+            <Text style={[styles.headerSubtitle, { marginTop: 4 }]}>
               {formatDate(data.createdAt)}
             </Text>
           </View>
@@ -414,13 +423,13 @@ export function QuotePDF({ data }: { data: QuotePDFData }) {
               </View>
             )}
             <View style={styles.totalRow}>
-              <Text style={[styles.colDesc, { fontWeight: 'bold', color: '#065f46' }]}>
+              <Text style={[styles.colDesc, { fontWeight: 'bold', color: '#1A2332' }]}>
                 Total Estimated Range
               </Text>
               <Text
                 style={[
                   styles.colAmount,
-                  { fontWeight: 'bold', color: '#065f46', fontSize: 11 },
+                  { fontWeight: 'bold', color: '#1A2332', fontSize: 11 },
                 ]}
               >
                 {formatCurrency(data.minPrice)}
@@ -428,7 +437,7 @@ export function QuotePDF({ data }: { data: QuotePDFData }) {
               <Text
                 style={[
                   styles.colAmount,
-                  { fontWeight: 'bold', color: '#065f46', fontSize: 11 },
+                  { fontWeight: 'bold', color: '#1A2332', fontSize: 11 },
                 ]}
               >
                 {formatCurrency(data.maxPrice)}
@@ -440,14 +449,14 @@ export function QuotePDF({ data }: { data: QuotePDFData }) {
           {data.notes && (
             <View style={[styles.infoCard, { marginBottom: 16 }]}>
               <Text style={styles.sectionTitle}>Notes</Text>
-              <Text style={{ fontSize: 9, color: '#374151' }}>{data.notes}</Text>
+              <Text style={{ fontSize: 9, color: '#1A2332' }}>{data.notes}</Text>
             </View>
           )}
 
           {/* Disclaimer */}
           <View style={styles.disclaimerBox}>
             <Text style={styles.disclaimerTitle}>
-              ⚠ Important Notice — Subject to Inspection
+              Important Notice — Subject to Inspection
             </Text>
             <Text style={styles.disclaimerText}>
               This document is a referential estimate subject to visual inspection
@@ -460,7 +469,7 @@ export function QuotePDF({ data }: { data: QuotePDFData }) {
           </View>
         </View>
 
-        {/* Footer */}
+        {/* Footer con fondo navy */}
         <View style={styles.footer}>
           <Text style={styles.footerLeft}>
             Platinum Construction Cleaning · (305) 555-0192 ·

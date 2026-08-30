@@ -43,73 +43,90 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/*
+  Paleta de colores Platinum Construction Cleaning
+  - Navy oscuro (#1A2332) como primario
+  - Platinum/Silver (#C0C5CD / #9CA3AF) como acento
+  - Blanco para contraste
+*/
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* Fondos */
+  --background: oklch(1 0 0); /* blanco */
+  --foreground: oklch(0.18 0.02 250); /* navy oscuro para texto */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.18 0.02 250);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.18 0.02 250);
+
+  /* Primario: Navy oscuro #1A2332 */
+  --primary: oklch(0.245 0.025 255); /* navy oscuro */
+  --primary-foreground: oklch(0.96 0.005 250); /* blanco-platino */
+
+  /* Secundario: silver/platinum */
+  --secondary: oklch(0.94 0.005 250); /* platinum claro */
+  --secondary-foreground: oklch(0.30 0.02 255); /* navy */
+
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.50 0.015 255);
+
+  /* Accent: silver/platinum medio */
+  --accent: oklch(0.88 0.008 255); /* platinum #C0C5CD aprox */
+  --accent-foreground: oklch(0.30 0.02 255);
+
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: oklch(0.90 0.005 255);
+  --input: oklch(0.92 0.005 255);
+  --ring: oklch(0.45 0.02 255); /* navy medio para focus */
+
+  --chart-1: oklch(0.35 0.05 255); /* navy */
+  --chart-2: oklch(0.78 0.01 255); /* platinum */
+  --chart-3: oklch(0.55 0.02 255);
+  --chart-4: oklch(0.88 0.008 255);
+  --chart-5: oklch(0.65 0.015 255);
+
+  --sidebar: oklch(0.245 0.025 255); /* navy sidebar */
+  --sidebar-foreground: oklch(0.96 0.005 250); /* texto platinum claro */
+  --sidebar-primary: oklch(0.88 0.008 255); /* platinum accent */
+  --sidebar-primary-foreground: oklch(0.245 0.025 255);
+  --sidebar-accent: oklch(0.32 0.025 255); /* navy medio */
+  --sidebar-accent-foreground: oklch(0.96 0.005 250);
+  --sidebar-border: oklch(0.35 0.02 255);
+  --sidebar-ring: oklch(0.88 0.008 255);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: oklch(0.18 0.025 255); /* navy oscuro */
+  --foreground: oklch(0.96 0.005 250);
+  --card: oklch(0.245 0.025 255);
+  --card-foreground: oklch(0.96 0.005 250);
+  --popover: oklch(0.245 0.025 255);
+  --popover-foreground: oklch(0.96 0.005 250);
+  --primary: oklch(0.88 0.008 255); /* platinum */
+  --primary-foreground: oklch(0.245 0.025 255);
+  --secondary: oklch(0.32 0.025 255);
+  --secondary-foreground: oklch(0.96 0.005 250);
+  --muted: oklch(0.32 0.025 255);
+  --muted-foreground: oklch(0.75 0.008 255);
+  --accent: oklch(0.40 0.025 255);
+  --accent-foreground: oklch(0.96 0.005 250);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
+  --ring: oklch(0.88 0.008 255);
+  --chart-1: oklch(0.35 0.05 255);
+  --chart-2: oklch(0.78 0.01 255);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: oklch(0.245 0.025 255);
+  --sidebar-foreground: oklch(0.96 0.005 250);
+  --sidebar-primary: oklch(0.88 0.008 255);
+  --sidebar-primary-foreground: oklch(0.245 0.025 255);
+  --sidebar-accent: oklch(0.32 0.025 255);
+  --sidebar-accent-foreground: oklch(0.96 0.005 250);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.88 0.008 255);
 }
 
 @layer base {
@@ -119,4 +136,33 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Gradiente navy -> platinum para fondos hero/headers */
+.bg-platinum-gradient {
+  background: linear-gradient(135deg, #1A2332 0%, #243245 50%, #1A2332 100%);
+}
+
+.bg-platinum-radial {
+  background: radial-gradient(ellipse at top, #243245 0%, #1A2332 70%);
+}
+
+/* Efecto metalico/platinum para botones primarios */
+.bg-platinum-primary {
+  background: linear-gradient(135deg, #1A2332 0%, #2a3850 100%);
+}
+
+/* Texto con efecto platinum metalico */
+.text-platinum {
+  color: #C0C5CD;
+}
+
+.text-platinum-bright {
+  color: #E8ECF0;
+}
+
+/* Linea separadora platinum */
+.platinum-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #9CA3AF 50%, transparent 100%);
 }

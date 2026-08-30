@@ -202,7 +202,7 @@ export default function PricingMatrixPage() {
       <Card className="border-border/60">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Settings2 className="h-5 w-5 text-emerald-600" /> Rate per SQFT
+            <Settings2 className="h-5 w-5 text-primary" /> Rate per SQFT
           </CardTitle>
           <CardDescription>
             Minimum and maximum rates per square foot, by property type and
@@ -220,9 +220,9 @@ export default function PricingMatrixPage() {
                   <Label className="text-xs text-muted-foreground">Combination</Label>
                   <div className="mt-1 flex items-center gap-2">
                     {row.propertyType === 'residential' ? (
-                      <Home className="h-4 w-4 text-emerald-600" />
+                      <Home className="h-4 w-4 text-primary" />
                     ) : (
-                      <Building2 className="h-4 w-4 text-emerald-600" />
+                      <Building2 className="h-4 w-4 text-primary" />
                     )}
                     <span className="font-medium capitalize">
                       {row.propertyType}
@@ -277,7 +277,7 @@ export default function PricingMatrixPage() {
                 <Button
                   onClick={() => saveMatrix(row.id)}
                   disabled={saving === row.id}
-                  className="bg-emerald-600 hover:bg-emerald-700"
+                  className="bg-platinum-primary text-platinum-bright hover:opacity-90"
                 >
                   {saving === row.id ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -297,7 +297,7 @@ export default function PricingMatrixPage() {
       <Card className="border-border/60">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Wrench className="h-5 w-5 text-emerald-600" /> Additional Services
+            <Wrench className="h-5 w-5 text-primary" /> Additional Services
           </CardTitle>
           <CardDescription>
             Fixed price ranges for optional add-on services.
@@ -366,7 +366,7 @@ export default function PricingMatrixPage() {
                 <Button
                   onClick={() => saveService(service.id)}
                   disabled={saving === service.id}
-                  className="bg-emerald-600 hover:bg-emerald-700"
+                  className="bg-platinum-primary text-platinum-bright hover:opacity-90"
                 >
                   {saving === service.id ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -383,11 +383,11 @@ export default function PricingMatrixPage() {
       </Card>
 
       {/* Nota informativa */}
-      <div className="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50/50 p-4">
-        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+      <div className="flex items-start gap-3 rounded-lg border border-primary/20 bg-secondary/30 p-4">
+        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
         <div className="text-sm">
-          <p className="font-medium text-emerald-900">How pricing works</p>
-          <p className="mt-1 text-emerald-800">
+          <p className="font-medium text-primary">How pricing works</p>
+          <p className="mt-1 text-foreground">
             The estimated range for each quote is calculated as:{' '}
             <code className="rounded bg-white px-1.5 py-0.5 text-xs">
               SQFT × rate (min/max)

@@ -161,7 +161,7 @@ export default function AdminDashboardPage() {
             Manage all quotes from the web and manual entries.
           </p>
         </div>
-        <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+        <Button asChild className="bg-platinum-primary text-platinum-bright hover:opacity-90">
           <Link href="/admin/quotes/new">
             <FilePlus2 className="mr-2 h-4 w-4" /> New Manual Quote
           </Link>
@@ -186,7 +186,7 @@ export default function AdminDashboardPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">Pending</p>
-              <Clock className="h-4 w-4 text-amber-500" />
+              <Clock className="h-4 w-4 text-amber-600" />
             </div>
             <p className="mt-1 text-2xl font-bold">{stats.pending}</p>
           </CardContent>
@@ -195,7 +195,7 @@ export default function AdminDashboardPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">Approved</p>
-              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              <CheckCircle2 className="h-4 w-4 text-primary" />
             </div>
             <p className="mt-1 text-2xl font-bold">{stats.approved}</p>
           </CardContent>
@@ -204,7 +204,7 @@ export default function AdminDashboardPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">Avg. Value</p>
-              <DollarSign className="h-4 w-4 text-emerald-600" />
+              <DollarSign className="h-4 w-4 text-primary" />
             </div>
             <p className="mt-1 text-2xl font-bold">{formatCurrency(stats.avgValue)}</p>
           </CardContent>
@@ -215,7 +215,7 @@ export default function AdminDashboardPage() {
       <Card className="border-border/60">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <TrendingUp className="h-5 w-5 text-emerald-600" /> Quotes
+            <TrendingUp className="h-5 w-5 text-primary" /> Quotes
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -321,7 +321,7 @@ export default function AdminDashboardPage() {
                             className={
                               q.source === 'web'
                                 ? 'border-sky-200 bg-sky-50 text-sky-700'
-                                : 'border-violet-200 bg-violet-50 text-violet-700'
+                                : 'border-secondary-foreground/20 bg-secondary text-primary'
                             }
                           >
                             <Globe className="mr-1 h-3 w-3" />
@@ -347,7 +347,7 @@ export default function AdminDashboardPage() {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="text-emerald-600 hover:text-emerald-700"
+                                  className="text-primary hover:text-primary"
                                   onClick={() => updateStatus(q.id, 'approved')}
                                 >
                                   Approve
