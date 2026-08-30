@@ -139,3 +139,30 @@ Stage Summary:
   * Admin header (pill en el navbar)
 - Todos los telefonos son tel: links clickeables
 - Licensed & Insured badge anadido al footer publico
+
+---
+Task ID: 5
+Agent: Main Orchestrator (Z.ai Code)
+Task: El logo en el front se seguia viendo con fondo. Reemplazar por el logo transparente recien subido y eliminar el artefacto de "caja" visible.
+
+Work Log:
+- Analizado el nuevo logo subido: PNG 1200x375 RGBA, genuinamente transparente (366878 pixeles alpha=0, esquinas RGBA 0,0,0,0)
+- Re-procesado con sharp las 3 versiones del logo (platinum-logo.png, -small.png, -pdf.png) desde el nuevo archivo subido
+- Diagnostico del problema: el componente <Image> de next/image aplicaba optimizacion que creaba una region rectangular mas oscura detras del logo. Adicionalmente, el header usaba bg-platinum-primary que era un gradiente (linear-gradient #1A2332 -> #2a3850), creando contraste percibido
+- Verificado con pixel sampling: el area del logo (8,24,39) era mas oscura que el header circundante (30,40,57) - confirmando el artefacto
+- Solucion aplicada:
+  1. Cambiado el componente Logo de next/image a <img> nativo (evita optimizacion que causa el artefacto)
+  2. Cambiado bg-platinum-primary de gradiente a color solido #1A2332 (elimina el contraste del gradiente)
+  3. Anadido bg-navy-solid como clase utilitaria para fondos solidos
+- Verificado con pixel sampling despues del fix: area del logo (26,35,50) = header circundante (26,35,50) - uniforme
+- Verificado con VLM en 4 ubicaciones:
+  * Header publico: "NO box, text floats on uniform background"
+  * Login admin: "NO"
+  * Header admin: "NO"
+  * Footer publico: "NO"
+- ESLint limpio, sin errores
+
+Stage Summary:
+- Logo transparente ahora se muestra perfectamente en todas las interfaces sin ninguna "caja" o fondo visible
+- Causa raiz identificada y corregida: next/image optimization + gradiente del header creaban el artefacto
+- Fix: <img> nativo + fondo navy solido = transparencia perfecta

@@ -1,16 +1,15 @@
 // Componente reutilizable del logo de Platinum Construction Cleaning
-// Usa la imagen real del logo con fondo navy
-import Image from 'next/image'
+// Usa <img> nativo (no next/image) para evitar artefactos de optimizacion
+// que crean un "caja" oscura detras del logo transparente.
+'use client'
 
 interface LogoProps {
   className?: string
-  variant?: 'full' | 'icon' // full = logo completo, icon = solo el bloque
-  showText?: boolean
+  variant?: 'full' | 'icon'
 }
 
 export function Logo({ className = '', variant = 'full' }: LogoProps) {
   if (variant === 'icon') {
-    // Icono cuadrado con fondo navy y letra P estilizada
     return (
       <div
         className={`flex items-center justify-center rounded-lg bg-platinum-primary ${className}`}
@@ -21,17 +20,13 @@ export function Logo({ className = '', variant = 'full' }: LogoProps) {
     )
   }
 
-  // Logo completo con imagen real
+  // Logo completo - usa <img> nativo para preservar transparencia perfecta
   return (
-    <div className={`relative ${className}`}>
-      <Image
-        src="/platinum-logo.png"
-        alt="Platinum Construction Cleaning"
-        width={220}
-        height={69}
-        className="h-auto w-full object-contain"
-        priority
-      />
-    </div>
+    <img
+      src="/platinum-logo.png"
+      alt="Platinum Construction Cleaning"
+      className={`h-auto w-full object-contain ${className}`}
+      style={{ background: 'transparent' }}
+    />
   )
 }

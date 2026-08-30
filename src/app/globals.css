@@ -147,9 +147,14 @@
   background: radial-gradient(ellipse at top, #243245 0%, #1A2332 70%);
 }
 
+/* Fondo navy solido (para headers donde va el logo - evita gradiente que crea "caja") */
+.bg-navy-solid {
+  background-color: #1A2332;
+}
+
 /* Efecto metalico/platinum para botones primarios */
 .bg-platinum-primary {
-  background: linear-gradient(135deg, #1A2332 0%, #2a3850 100%);
+  background-color: #1A2332;
 }
 
 /* Texto con efecto platinum metalico */
