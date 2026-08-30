@@ -1,0 +1,76 @@
+// Esquema de base de datos para Platinum Construction Cleaning
+// Tablas: Profile (admins), Quote (cotizaciones), PricingMatrix (precios por sqft),
+// AdditionalService (cargos extra como escombros y stickers)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Usuarios administradores del panel privado
+model Profile {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String // hash bcrypt
+  role      String   @default("admin") // admin
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Cotizaciones / presupuestos (tanto de la web como manuales)
+model Quote {
+  id            String   @id @default(cuid())
+  source        String   // "web" | "manual"
+  status        String   @default("pending") // pending | approved | rejected
+
+  // Datos del proyecto
+  propertyType  String // residential | commercial
+  sqft          Int
+  cleaningLevel String // rough | final
+  hasDebris     Boolean
+  hasStickers   Boolean
+
+  // Rango de precio calculado
+  minPrice      Float
+  maxPrice      Float
+
+  // Datos del cliente (opcional en cotizaciones web hasta agendar inspeccion)
+  customerName    String?
+  customerEmail   String?
+  customerPhone   String?
+  projectAddress  String?
+  notes           String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Matriz de precios por SQFT segun tipo de propiedad y nivel de limpieza
+model PricingMatrix {
+  id             String  @id @default(cuid())
+  propertyType   String // residential | commercial
+  cleaningLevel  String // rough | final
+  minRatePerSqft Float // precio minimo por sqft
+  maxRatePerSqft Float // precio maximo por sqft
+  isActive       Boolean @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([propertyType, cleaningLevel])
+}
+
+// Servicios adicionales con cargos extra (escombros, stickers en ventanas)
+model AdditionalService {
+  id        String   @id @default(cuid())
+  key       String   @unique // debris | stickers
+  label     String
+  minPrice  Float // cargo minimo fijo
+  maxPrice  Float // cargo maximo fijo
+  isActive Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+}
