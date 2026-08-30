@@ -166,3 +166,29 @@ Stage Summary:
 - Logo transparente ahora se muestra perfectamente en todas las interfaces sin ninguna "caja" o fondo visible
 - Causa raiz identificada y corregida: next/image optimization + gradiente del header creaban el artefacto
 - Fix: <img> nativo + fondo navy solido = transparencia perfecta
+
+---
+Task ID: 6
+Agent: Main Orchestrator (Z.ai Code)
+Task: El logo en el header del admin era muy grande y se superponia con otros elementos. Corregir el tamano.
+
+Work Log:
+- Analizado el screenshot subido: el logo "PLATINUM CONSTRUCTION CLEANING" era ~3-4 veces mas alto que el header (h-16 = 64px) y se desbordaba sobre el contenido, el sidebar y el titulo "Dashboard"
+- Diagnostico: el componente Logo usaba w-full + w-40 (160px ancho), y el <img> sin restriccion de altura crecia a su tamano natural
+- Solucion: anadido prop heightClass al componente Logo para controlar la altura explicitamente
+- Actualizado el componente Logo (src/components/public/logo.tsx): ahora acepta heightClass y aplica h-auto w-auto object-contain con la altura indicada
+- Actualizadas las 5 ubicaciones del logo con alturas apropiadas:
+  * Admin header: heightClass="h-9" (36px - cabe en h-16)
+  * Public header: heightClass="h-10" (40px - cabe en h-20)
+  * Admin login: heightClass="h-16" (64px)
+  * Public footer: heightClass="h-12" (48px)
+  * Public hero: heightClass="h-24" (96px)
+- Verificado con VLM:
+  * Admin header: logo propiamente dimensionado, no se desborda, no overlap, ADMIN badge visible
+  * Public header: logo bien proporcionado, sin overlap, layout limpio (logo + contacto + nav)
+- ESLint limpio
+
+Stage Summary:
+- Logo del admin header corregido: ahora usa altura explicita (h-9 = 36px) que cabe dentro del h-16 (64px) del header
+- Todas las ubicaciones del logo actualizadas con alturas controladas para consistencia
+- Componente Logo mejorado con prop heightClass para sizing confiable

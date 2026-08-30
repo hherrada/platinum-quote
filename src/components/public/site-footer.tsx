@@ -9,7 +9,7 @@ export function SiteFooter() {
         <div className="grid gap-8 md:grid-cols-4">
           {/* Logo + descripcion */}
           <div className="md:col-span-1">
-            <Logo className="w-44" />
+            <Logo className="w-44" heightClass="h-12" />
             <p className="mt-4 text-sm text-platinum">
               Professional post-construction cleaning services for residential
               and commercial properties throughout Florida.

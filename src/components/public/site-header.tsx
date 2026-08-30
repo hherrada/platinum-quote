@@ -8,7 +8,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-platinum/15 bg-platinum-primary shadow-sm">
       <div className="container mx-auto flex h-20 items-center justify-between gap-4 px-4">
         <Link href="/" className="flex shrink-0 items-center gap-3">
-          <Logo className="w-44 sm:w-52" />
+          <Logo className="w-44 sm:w-52" heightClass="h-10" />
         </Link>
 
         {/* Contacto directo de Maria Roldan - visible en desktop */}

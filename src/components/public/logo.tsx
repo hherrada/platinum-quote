@@ -6,9 +6,11 @@
 interface LogoProps {
   className?: string
   variant?: 'full' | 'icon'
+  /** Altura explicita en px o clase tailwind (ej: "h-8", "h-10") para limitar el logo */
+  heightClass?: string
 }
 
-export function Logo({ className = '', variant = 'full' }: LogoProps) {
+export function Logo({ className = '', variant = 'full', heightClass }: LogoProps) {
   if (variant === 'icon') {
     return (
       <div
@@ -20,13 +22,14 @@ export function Logo({ className = '', variant = 'full' }: LogoProps) {
     )
   }
 
-  // Logo completo - usa <img> nativo para preservar transparencia perfecta
+  // Logo completo - usa <img> nativo con altura controlada para preservar transparencia
+  // y evitar que crezca mas alla del contenedor del header.
   return (
     <img
       src="/platinum-logo.png"
       alt="Platinum Construction Cleaning"
-      className={`h-auto w-full object-contain ${className}`}
-      style={{ background: 'transparent' }}
+      className={`h-auto w-auto object-contain ${heightClass ?? ''} ${className}`}
+      style={{ background: 'transparent', maxWidth: 'none' }}
     />
   )
 }
