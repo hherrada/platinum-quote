@@ -54,7 +54,7 @@ export default function AdminLayout({
       <header className="sticky top-0 z-40 border-b border-platinum/10 bg-platinum-primary shadow-sm">
         <div className="flex h-16 items-center justify-between px-4">
           <Link href="/admin" className="flex items-center gap-2">
-            <Logo heightClass="h-9" />
+            <Logo height={36} />
             <span className="ml-2 hidden rounded-md border border-platinum/30 px-2 py-0.5 text-xs font-medium text-platinum-bright sm:inline">
               ADMIN
             </span>

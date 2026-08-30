@@ -29,7 +29,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-16 sm:py-20">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-8 flex justify-center">
-              <Logo className="w-64 sm:w-72 drop-shadow-2xl" heightClass="h-24" />
+              <Logo className="drop-shadow-2xl" height={96} />
             </div>
             <Badge
               variant="secondary"

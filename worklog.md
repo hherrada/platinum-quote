@@ -192,3 +192,42 @@ Stage Summary:
 - Logo del admin header corregido: ahora usa altura explicita (h-9 = 36px) que cabe dentro del h-16 (64px) del header
 - Todas las ubicaciones del logo actualizadas con alturas controladas para consistencia
 - Componente Logo mejorado con prop heightClass para sizing confiable
+
+---
+Task ID: 7
+Agent: Main Orchestrator (Z.ai Code)
+Task: El logo seguia muy grande en el header del admin y en el footer publico, empujando otros elementos. Corregir definitivamente.
+
+Work Log:
+- Analizados los 2 screenshots subidos: el logo en el admin header media ~3-4 veces la altura del header (64px) y se desbordaba sobre el contenido; el logo del footer publico tambien era demasiado grande
+- Diagnostico raiz: el prop heightClass (clases Tailwind como h-9) NO se estaba aplicando. Verificado con computed styles: el logo renderizaba a 375px (tamano natural) aunque la clase h-9 (36px) estaba en el className. Esto ocurria porque:
+  1. h-auto y w-auto (que anadi primero) tienen mayor prioridad o conflicto de orden
+  2. El <img> sin width/height explicitos crece a su tamano natural (1200x375)
+  3. Las clases Tailwind no tienen suficiente especificidad contra el comportamiento natural del img
+- Solucion definitiva: cambiar el componente Logo para usar inline styles (maxima especificidad CSS):
+  * height prop en pixels (numero)
+  * width: auto (mantiene aspect ratio)
+  * Aplicado via style={{height: `${height}px`, width: 'auto'}} - inline styles SIEMPRE ganan sobre clases
+- Actualizadas las 5 ubicaciones con height en px:
+  * Admin header: height={36} (cabe en h-16=64px)
+  * Public header: height={40} (cabe en h-20=80px)
+  * Admin login: height={64}
+  * Public footer: height={48}
+  * Public hero: height={96}
+- Removidos los w-XX classes conflictivos (w-44, w-52, w-56, w-64, w-72) que forzaban ancho
+- Verificado con computed styles:
+  * Admin header logo: renderedW=115px, renderedH=36px (antes 1200x375)
+  * Footer logo: renderedW=154px, renderedH=48px
+  * Public header: renderedW=128px, renderedH=40px
+  * Hero: renderedW=307px, renderedH=96px
+- Verificado con VLM:
+  * Admin header: logo propiamente dimensionado, sin overlap, ADMIN badge + contacto + user info + Sign Out todos visibles y separados
+  * Public footer: 4 columnas limpias sin overlap, logo bien dimensionado
+  * Public header: logo + contacto + nav links, sin overlap
+- ESLint limpio
+
+Stage Summary:
+- Logo ahora controlado por inline styles (height en px) en lugar de clases Tailwind - garantiza que se respete el tamano
+- Admin header: logo a 36px de altura, cabe en header de 64px, sin overflow ni overlap
+- Footer publico: logo a 48px, layout de 4 columnas limpio
+- Todos los headers y ubicaciones verificadas visualmente con VLM

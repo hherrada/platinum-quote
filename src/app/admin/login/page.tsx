@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
       </Link>
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
-          <Logo className="w-56 drop-shadow-xl" heightClass="h-16" />
+          <Logo className="drop-shadow-xl" height={64} />
           <h1 className="mt-6 text-2xl font-bold text-platinum-bright">Admin Portal</h1>
           <p className="text-sm text-platinum">
             Sign in to access the management dashboard

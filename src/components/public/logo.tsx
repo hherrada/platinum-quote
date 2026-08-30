@@ -1,16 +1,17 @@
 // Componente reutilizable del logo de Platinum Construction Cleaning
 // Usa <img> nativo (no next/image) para evitar artefactos de optimizacion
 // que crean un "caja" oscura detras del logo transparente.
+// El tamano se controla con height prop (en px) para garantizar que se respete.
 'use client'
 
 interface LogoProps {
   className?: string
   variant?: 'full' | 'icon'
-  /** Altura explicita en px o clase tailwind (ej: "h-8", "h-10") para limitar el logo */
-  heightClass?: string
+  /** Altura en pixels (ej: 36 para h-9, 48 para h-12, 64 para h-16) */
+  height?: number
 }
 
-export function Logo({ className = '', variant = 'full', heightClass }: LogoProps) {
+export function Logo({ className = '', variant = 'full', height = 36 }: LogoProps) {
   if (variant === 'icon') {
     return (
       <div
@@ -22,14 +23,20 @@ export function Logo({ className = '', variant = 'full', heightClass }: LogoProp
     )
   }
 
-  // Logo completo - usa <img> nativo con altura controlada para preservar transparencia
-  // y evitar que crezca mas alla del contenedor del header.
+  // Logo completo - usa <img> nativo con altura y ancho controlados via inline style.
+  // Inline styles tienen la mayor especificidad, garantizando que el logo
+  // no crezca a su tamano natural (1200x375).
   return (
     <img
       src="/platinum-logo.png"
       alt="Platinum Construction Cleaning"
-      className={`h-auto w-auto object-contain ${heightClass ?? ''} ${className}`}
-      style={{ background: 'transparent', maxWidth: 'none' }}
+      className={`object-contain ${className}`}
+      style={{
+        background: 'transparent',
+        height: `${height}px`,
+        width: 'auto',
+        maxWidth: 'none',
+      }}
     />
   )
 }
