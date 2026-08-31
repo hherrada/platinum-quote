@@ -21,7 +21,6 @@ import {
   Home,
   Building2,
   Loader2,
-  Calculator,
   ArrowLeft,
   Info,
   User,
@@ -29,6 +28,7 @@ import {
   Phone,
   MapPin,
   FileText,
+  Save,
 } from 'lucide-react'
 
 type PropertyType = 'residential' | 'commercial'
@@ -46,6 +46,7 @@ interface PriceRange {
     stickersMax: number
     rateMin: number
     rateMax: number
+    levels: string[]
   }
 }
 
@@ -79,61 +80,28 @@ export default function NewQuotePage() {
   const [estimate, setEstimate] = useState<PriceRange | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  async function handleCalculate() {
+  // Validacion antes de guardar
+  function validate(): string | null {
     const sqftNum = parseInt(sqft, 10)
-    if (!sqftNum || sqftNum <= 0) {
-      toast({
-        title: 'Invalid input',
-        description: 'Please enter a valid square footage.',
-        variant: 'destructive',
-      })
-      return
-    }
-    setSubmitting(true)
-    try {
-      const res = await fetch('/api/quotes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          propertyType,
-          sqft: sqftNum,
-          cleaningLevel,
-          hasDebris,
-          hasStickers,
-          source: 'web', // calculo previo sin guardar cliente
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
-      setEstimate(data.priceRange)
-    } catch (e) {
-      toast({
-        title: 'Error',
-        description: e instanceof Error ? e.message : 'Failed to calculate',
-        variant: 'destructive',
-      })
-    } finally {
-      setSubmitting(false)
-    }
+    if (!sqftNum || sqftNum <= 0) return 'Please enter a valid square footage.'
+    if (!customerName.trim()) return 'Please enter the customer name.'
+    if (!customerEmail.trim()) return 'Please enter the customer email.'
+    if (!customerPhone.trim()) return 'Please enter the customer phone.'
+    if (!projectAddress.trim()) return 'Please enter the project address.'
+    return null
   }
 
   async function handleSave() {
-    if (!estimate) {
+    const error = validate()
+    if (error) {
       toast({
-        title: 'Calculate first',
-        description: 'Please calculate the estimate before saving.',
+        title: 'Missing information',
+        description: error,
         variant: 'destructive',
       })
       return
     }
-    if (!customerName || !customerEmail || !customerPhone || !projectAddress) {
-      toast({
-        title: 'Missing customer data',
-        description: 'All customer fields are required for manual quotes.',
-        variant: 'destructive',
-      })
-      return
-    }
+
     setSubmitting(true)
     try {
       const res = await fetch('/api/quotes', {
@@ -181,8 +149,7 @@ export default function NewQuotePage() {
         </Button>
         <h1 className="text-2xl font-bold tracking-tight">New Manual Quote</h1>
         <p className="text-sm text-muted-foreground">
-          Create a quote with full customer details. A professional PDF will be
-          available after saving.
+          Fill in all the project and customer details below. The estimate will be calculated automatically when you save.
         </p>
       </div>
 
@@ -193,10 +160,10 @@ export default function NewQuotePage() {
           <Card className="border-border/60">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Calculator className="h-5 w-5 text-primary" /> Project Details
+                <Home className="h-5 w-5 text-primary" /> Project Details
               </CardTitle>
               <CardDescription>
-                Enter the project information to calculate the price range.
+                Enter the project information.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
@@ -233,27 +200,21 @@ export default function NewQuotePage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="sqft">Square Footage (SQFT)</Label>
+                  <Label htmlFor="sqft">Square Footage (SQFT) <span className="text-destructive">*</span></Label>
                   <Input
                     id="sqft"
                     type="number"
                     min="1"
                     placeholder="e.g. 2500"
                     value={sqft}
-                    onChange={(e) => {
-                      setSqft(e.target.value)
-                      setEstimate(null)
-                    }}
+                    onChange={(e) => setSqft(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Cleaning Level</Label>
                   <RadioGroup
                     value={cleaningLevel}
-                    onValueChange={(v) => {
-                      setCleaningLevel(v as CleaningLevel)
-                      setEstimate(null)
-                    }}
+                    onValueChange={(v) => setCleaningLevel(v as CleaningLevel)}
                     className="grid grid-cols-3 gap-2"
                   >
                     <label
@@ -299,10 +260,7 @@ export default function NewQuotePage() {
                   <input
                     type="checkbox"
                     checked={hasDebris}
-                    onChange={(e) => {
-                      setHasDebris(e.target.checked)
-                      setEstimate(null)
-                    }}
+                    onChange={(e) => setHasDebris(e.target.checked)}
                     className="h-4 w-4 accent-primary"
                   />
                   <span className="text-sm font-medium">Debris Removal</span>
@@ -315,32 +273,12 @@ export default function NewQuotePage() {
                   <input
                     type="checkbox"
                     checked={hasStickers}
-                    onChange={(e) => {
-                      setHasStickers(e.target.checked)
-                      setEstimate(null)
-                    }}
+                    onChange={(e) => setHasStickers(e.target.checked)}
                     className="h-4 w-4 accent-primary"
                   />
                   <span className="text-sm font-medium">Window Stickers</span>
                 </label>
               </div>
-
-              <Button
-                onClick={handleCalculate}
-                disabled={submitting || !sqft}
-                variant="outline"
-                className="w-full"
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Calculating...
-                  </>
-                ) : (
-                  <>
-                    <Calculator className="mr-2 h-4 w-4" /> Calculate Estimate
-                  </>
-                )}
-              </Button>
             </CardContent>
           </Card>
 
@@ -358,7 +296,7 @@ export default function NewQuotePage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="c-name" className="flex items-center gap-1.5">
-                    <User className="h-3 w-3" /> Full Name
+                    <User className="h-3 w-3" /> Full Name <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="c-name"
@@ -369,7 +307,7 @@ export default function NewQuotePage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="c-phone" className="flex items-center gap-1.5">
-                    <Phone className="h-3 w-3" /> Phone
+                    <Phone className="h-3 w-3" /> Phone <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="c-phone"
@@ -380,7 +318,7 @@ export default function NewQuotePage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="c-email" className="flex items-center gap-1.5">
-                    <Mail className="h-3 w-3" /> Email
+                    <Mail className="h-3 w-3" /> Email <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="c-email"
@@ -392,7 +330,7 @@ export default function NewQuotePage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="c-addr" className="flex items-center gap-1.5">
-                    <MapPin className="h-3 w-3" /> Project Address
+                    <MapPin className="h-3 w-3" /> Project Address <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="c-addr"
@@ -416,80 +354,50 @@ export default function NewQuotePage() {
           </Card>
         </div>
 
-        {/* Columna derecha: resumen y acciones */}
+        {/* Columna derecha: resumen y boton de guardar al final */}
         <div className="space-y-4">
           <Card className="sticky top-20 border-primary/30 bg-secondary/30">
             <CardHeader>
-              <CardTitle className="flex items-center justify-between text-lg">
-                <span className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" /> Summary
-                </span>
-                {estimate && (
-                  <Badge className="bg-primary text-primary-foreground hover:bg-primary">
-                    Calculated
-                  </Badge>
-                )}
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <FileText className="h-5 w-5 text-primary" /> Summary
               </CardTitle>
+              <CardDescription>
+                Review the details and save to generate the PDF.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {estimate ? (
-                <>
-                  <div className="rounded-lg border border-primary/20 bg-white p-4 text-center">
-                    <p className="text-xs text-muted-foreground">Estimated Range</p>
-                    <p className="mt-1 text-2xl font-bold text-primary">
-                      {formatCurrency(estimate.minPrice)} –{' '}
-                      {formatCurrency(estimate.maxPrice)}
-                    </p>
-                  </div>
-                  <dl className="space-y-1.5 text-xs">
-                    <div className="flex justify-between">
-                      <dt className="text-muted-foreground">Property</dt>
-                      <dd className="font-medium capitalize">{propertyType}</dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt className="text-muted-foreground">Level</dt>
-                      <dd className="font-medium">
-                        {cleaningLevel === 'both' ? 'Rough + Final' : cleaningLevel.charAt(0).toUpperCase() + cleaningLevel.slice(1)}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt className="text-muted-foreground">SQFT</dt>
-                      <dd className="font-medium tabular-nums">
-                        {parseInt(sqft || '0').toLocaleString()}
-                      </dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt className="text-muted-foreground">Rate</dt>
-                      <dd className="font-medium tabular-nums">
-                        ${estimate.breakdown.rateMin.toFixed(2)}–
-                        ${estimate.breakdown.rateMax.toFixed(2)}/sqft
-                      </dd>
-                    </div>
-                    {hasDebris && (
-                      <div className="flex justify-between">
-                        <dt className="text-muted-foreground">Debris</dt>
-                        <dd className="font-medium">
-                          {formatCurrency(estimate.breakdown.debrisMin)}–
-                          {formatCurrency(estimate.breakdown.debrisMax)}
-                        </dd>
-                      </div>
-                    )}
-                    {hasStickers && (
-                      <div className="flex justify-between">
-                        <dt className="text-muted-foreground">Stickers</dt>
-                        <dd className="font-medium">
-                          {formatCurrency(estimate.breakdown.stickersMin)}–
-                          {formatCurrency(estimate.breakdown.stickersMax)}
-                        </dd>
-                      </div>
-                    )}
-                  </dl>
-                </>
-              ) : (
-                <div className="rounded-lg border border-dashed border-border bg-white p-6 text-center text-sm text-muted-foreground">
-                  Calculate an estimate to see the price range here.
+              <dl className="space-y-1.5 text-xs">
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Property</dt>
+                  <dd className="font-medium capitalize">{propertyType}</dd>
                 </div>
-              )}
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Level</dt>
+                  <dd className="font-medium">
+                    {cleaningLevel === 'both' ? 'Rough + Final' : cleaningLevel.charAt(0).toUpperCase() + cleaningLevel.slice(1)}
+                  </dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">SQFT</dt>
+                  <dd className="font-medium tabular-nums">
+                    {parseInt(sqft || '0').toLocaleString()}
+                  </dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Debris</dt>
+                  <dd className="font-medium">{hasDebris ? 'Yes' : 'No'}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Stickers</dt>
+                  <dd className="font-medium">{hasStickers ? 'Yes' : 'No'}</dd>
+                </div>
+                {customerName && (
+                  <div className="flex justify-between border-t border-border/60 pt-1.5">
+                    <dt className="text-muted-foreground">Customer</dt>
+                    <dd className="font-medium">{customerName}</dd>
+                  </div>
+                )}
+              </dl>
 
               <Alert className="border-amber-200 bg-amber-50 text-amber-900">
                 <Info className="h-4 w-4" />
@@ -499,10 +407,12 @@ export default function NewQuotePage() {
                 </AlertDescription>
               </Alert>
 
+              {/* Boton de guardar al FINAL - despues de todos los datos */}
               <Button
                 onClick={handleSave}
-                disabled={submitting || !estimate}
+                disabled={submitting}
                 className="w-full bg-platinum-primary text-platinum-bright hover:opacity-90"
+                size="lg"
               >
                 {submitting ? (
                   <>
@@ -510,10 +420,13 @@ export default function NewQuotePage() {
                   </>
                 ) : (
                   <>
-                    <FileText className="mr-2 h-4 w-4" /> Save Quote &amp; Generate PDF
+                    <Save className="mr-2 h-4 w-4" /> Calculate &amp; Save Quote
                   </>
                 )}
               </Button>
+              <p className="text-center text-xs text-muted-foreground">
+                The estimate will be calculated automatically on save
+              </p>
             </CardContent>
           </Card>
         </div>

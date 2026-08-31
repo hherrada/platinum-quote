@@ -83,11 +83,11 @@ export default function Home() {
         <div className="mx-auto max-w-2xl">
           <div className="mb-8 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-primary">
-              Get Your Estimate
+              Get Your Estimate by Email
             </h2>
             <p className="mt-2 text-muted-foreground">
-              Fill out the form below to receive an estimated price range for your
-              project.
+              Fill in your contact details and project info. Your estimate will be
+              sent to your email immediately.
             </p>
           </div>
           <QuoteCalculator />

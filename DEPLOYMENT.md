@@ -57,7 +57,7 @@ git push -u origin main
 
    | Name | Value |
    |------|-------|
-   | `DATABASE_URL` | `postgresql://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres` *(your Supabase pooler URL)* |
+   | `DATABASE_URL` | `postgresql://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1` *(your Supabase pooler URL)* |
    | `NEXTAUTH_SECRET` | Generate one with: `openssl rand -base64 32` *(run in terminal)* |
    | `NEXTAUTH_URL` | `https://your-app-name.vercel.app` *(your Vercel URL, add after first deploy if unsure)* |
 
@@ -135,7 +135,7 @@ To keep working locally with SQLite (faster than Supabase):
 **OR** (recommended) — connect your local dev directly to Supabase:
 ```bash
 # .env
-DATABASE_URL="postgresql://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres"
+DATABASE_URL="postgresql://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1"
 ```
 Then run `bun run db:push` once, and develop against the real DB.
 

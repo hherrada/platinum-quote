@@ -5,6 +5,9 @@ import { db } from '@/lib/db'
 import { calculatePriceRange } from '@/lib/pricing'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { sendQuoteEmail, isEmailConfigured } from '@/lib/email'
+import { QuotePDF } from '@/components/admin/quote-pdf'
+import { renderToBuffer } from '@react-pdf/renderer'
 
 // Esquema de validacion para crear cotizacion
 const createQuoteSchema = z.object({
@@ -78,6 +81,56 @@ export async function POST(req: NextRequest) {
         notes: data.notes || null,
       },
     })
+
+    // Si es una cotizacion web con email del cliente, enviar el email automaticamente
+    // (silencioso si el email no esta configurado)
+    if (data.source === 'web' && data.customerEmail && isEmailConfigured()) {
+      try {
+        const { renderToBuffer } = await import('@react-pdf/renderer')
+        const { QuotePDF } = await import('@/components/admin/quote-pdf')
+        const pdfBuffer = await renderToBuffer(
+          <QuotePDF
+            data={{
+              quoteId: quote.id,
+              customerName: quote.customerName || '',
+              customerEmail: quote.customerEmail || '',
+              customerPhone: quote.customerPhone || '',
+              projectAddress: quote.projectAddress || '',
+              propertyType: quote.propertyType,
+              cleaningLevel: quote.cleaningLevel,
+              sqft: quote.sqft,
+              hasDebris: quote.hasDebris,
+              hasStickers: quote.hasStickers,
+              minPrice: quote.minPrice,
+              maxPrice: quote.maxPrice,
+              finalPrice: quote.finalPrice,
+              notes: quote.notes,
+              createdAt: quote.createdAt.toISOString(),
+              breakdown: range.breakdown,
+            }}
+          />
+        )
+        await sendQuoteEmail({
+          to: data.customerEmail,
+          customerName: quote.customerName || 'Valued Customer',
+          quoteId: quote.id,
+          minPrice: quote.minPrice,
+          maxPrice: quote.maxPrice,
+          finalPrice: quote.finalPrice,
+          propertyType: quote.propertyType,
+          cleaningLevel: quote.cleaningLevel,
+          sqft: quote.sqft,
+          attachment: {
+            filename: `quote-${quote.id.slice(-8).toUpperCase()}.pdf`,
+            content: Buffer.from(pdfBuffer),
+            contentType: 'application/pdf',
+          },
+        })
+      } catch (emailError) {
+        // El email fallo pero la cotizacion se guardo - no fallar la respuesta
+        console.error('Failed to send email (quote still saved):', emailError)
+      }
+    }
 
     return NextResponse.json({ quote, priceRange: range }, { status: 201 })
   } catch (error) {
