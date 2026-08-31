@@ -29,6 +29,7 @@ interface QuotePDFData {
   hasStickers: boolean
   minPrice: number
   maxPrice: number
+  finalPrice?: number | null
   notes?: string | null
   createdAt: string
   breakdown: {
@@ -82,7 +83,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: NAVY,
-    padding: 16,
+    padding: 12,
     borderBottomWidth: 2,
     borderBottomColor: PLATINUM,
   },
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
   },
   // ===== Body =====
   body: {
-    padding: 14,
+    padding: 12,
   },
   // ===== Contact Block destacado =====
   contactBlock: {
@@ -544,7 +545,11 @@ export function QuotePDF({ data }: { data: QuotePDFData }) {
               <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>Service</Text>
                 <Text style={styles.infoValue}>
-                  {data.cleaningLevel === 'rough' ? 'Rough Clean' : 'Final Clean'}
+                  {data.cleaningLevel === 'both'
+                    ? 'Rough + Final Clean'
+                    : data.cleaningLevel === 'rough'
+                    ? 'Rough Clean'
+                    : 'Final Clean'}
                 </Text>
               </View>
               <View style={styles.infoRow}>
@@ -568,15 +573,31 @@ export function QuotePDF({ data }: { data: QuotePDFData }) {
           </View>
 
           {/* ===== PRICE BREAKDOWN ===== */}
-          <Text style={styles.sectionTitle}>Estimated Price Range</Text>
+          <Text style={styles.sectionTitle}>
+            {data.finalPrice ? 'Final Price' : 'Estimated Price Range'}
+          </Text>
           <View style={styles.priceBox}>
-            <Text style={styles.priceLabel}>ESTIMATED PRICE RANGE</Text>
-            <Text style={styles.priceValue}>
-              {formatCurrency(data.minPrice)} – {formatCurrency(data.maxPrice)}
-            </Text>
-            <Text style={styles.priceRange}>
-              Subject to visual inspection on site
-            </Text>
+            {data.finalPrice ? (
+              <>
+                <Text style={styles.priceLabel}>FINAL PRICE (APPROVED)</Text>
+                <Text style={styles.priceValue}>
+                  {formatCurrency(data.finalPrice)}
+                </Text>
+                <Text style={styles.priceRange}>
+                  Estimated range was: {formatCurrency(data.minPrice)} – {formatCurrency(data.maxPrice)}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.priceLabel}>ESTIMATED PRICE RANGE</Text>
+                <Text style={styles.priceValue}>
+                  {formatCurrency(data.minPrice)} – {formatCurrency(data.maxPrice)}
+                </Text>
+                <Text style={styles.priceRange}>
+                  Subject to visual inspection on site
+                </Text>
+              </>
+            )}
           </View>
 
           <View style={styles.table}>

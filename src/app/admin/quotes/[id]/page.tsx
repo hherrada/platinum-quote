@@ -10,6 +10,9 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   Select,
@@ -18,6 +21,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { useToast } from '@/hooks/use-toast'
 import {
   ArrowLeft,
@@ -36,6 +47,9 @@ import {
   FileText,
   Info,
   Trash2,
+  Pencil,
+  Copy,
+  DollarSign,
 } from 'lucide-react'
 
 interface Quote {
@@ -49,6 +63,7 @@ interface Quote {
   hasStickers: boolean
   minPrice: number
   maxPrice: number
+  finalPrice: number | null
   customerName: string | null
   customerEmail: string | null
   customerPhone: string | null
@@ -82,6 +97,11 @@ const statusConfig: Record<string, { label: string; variant: 'default' | 'second
   rejected: { label: 'Rejected', variant: 'destructive', icon: XCircle },
 }
 
+function formatLevel(level: string) {
+  if (level === 'both') return 'Rough + Final Clean'
+  return `${level.charAt(0).toUpperCase() + level.slice(1)} Clean`
+}
+
 export default function QuoteDetailPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
@@ -90,6 +110,20 @@ export default function QuoteDetailPage() {
   const [loading, setLoading] = useState(true)
   const [downloading, setDownloading] = useState(false)
   const [sendingEmail, setSendingEmail] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
+  const [emailOpen, setEmailOpen] = useState(false)
+  const [emailTo, setEmailTo] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [duplicating, setDuplicating] = useState(false)
+
+  // Edit form state
+  const [editFinalPrice, setEditFinalPrice] = useState('')
+  const [editStatus, setEditStatus] = useState('pending')
+  const [editCustomerName, setEditCustomerName] = useState('')
+  const [editCustomerEmail, setEditCustomerEmail] = useState('')
+  const [editCustomerPhone, setEditCustomerPhone] = useState('')
+  const [editProjectAddress, setEditProjectAddress] = useState('')
+  const [editNotes, setEditNotes] = useState('')
 
   useEffect(() => {
     async function fetchQuote() {
@@ -98,6 +132,15 @@ export default function QuoteDetailPage() {
         const data = await res.json()
         if (!res.ok) throw new Error(data.error)
         setQuote(data.quote)
+        // Initialize edit form
+        setEditStatus(data.quote.status)
+        setEditFinalPrice(data.quote.finalPrice ? String(data.quote.finalPrice) : '')
+        setEditCustomerName(data.quote.customerName || '')
+        setEditCustomerEmail(data.quote.customerEmail || '')
+        setEditCustomerPhone(data.quote.customerPhone || '')
+        setEditProjectAddress(data.quote.projectAddress || '')
+        setEditNotes(data.quote.notes || '')
+        setEmailTo(data.quote.customerEmail || '')
       } catch {
         toast({
           title: 'Error',
@@ -132,6 +175,71 @@ export default function QuoteDetailPage() {
     }
   }
 
+  async function handleSaveEdit() {
+    if (!quote) return
+    setSaving(true)
+    try {
+      const body: Record<string, unknown> = {
+        status: editStatus,
+        customerName: editCustomerName,
+        customerEmail: editCustomerEmail,
+        customerPhone: editCustomerPhone,
+        projectAddress: editProjectAddress,
+        notes: editNotes,
+      }
+      if (editFinalPrice) {
+        body.finalPrice = parseFloat(editFinalPrice)
+      } else {
+        body.finalPrice = null
+      }
+      const res = await fetch(`/api/quotes/${quote.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      if (!res.ok) throw new Error('Failed')
+      const data = await res.json()
+      setQuote(data.quote)
+      setEditOpen(false)
+      toast({ title: 'Quote updated', description: 'Changes saved successfully.' })
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to update quote.',
+        variant: 'destructive',
+      })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function handleDuplicate() {
+    if (!quote) return
+    setDuplicating(true)
+    try {
+      const res = await fetch(`/api/quotes/${quote.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'duplicate' }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      const data = await res.json()
+      toast({
+        title: 'Quote duplicated',
+        description: 'Redirecting to the new quote...',
+      })
+      router.push(`/admin/quotes/${data.quote.id}`)
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to duplicate quote.',
+        variant: 'destructive',
+      })
+    } finally {
+      setDuplicating(false)
+    }
+  }
+
   async function handleDownloadPDF() {
     if (!quote) return
     setDownloading(true)
@@ -160,26 +268,33 @@ export default function QuoteDetailPage() {
   }
 
   async function handleSendEmail() {
-    if (!quote?.customerEmail) {
+    if (!quote) return
+    if (!emailTo) {
       toast({
-        title: 'No email',
-        description: 'This quote has no customer email address.',
+        title: 'Missing email',
+        description: 'Please enter a recipient email address.',
         variant: 'destructive',
       })
       return
     }
     setSendingEmail(true)
     try {
-      // Simulacion de envio por email (en produccion se integraria con un servicio SMTP)
-      await new Promise((r) => setTimeout(r, 1200))
+      const res = await fetch(`/api/quotes/${quote.id}/email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: emailTo }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
       toast({
         title: 'Email sent',
-        description: `Quote sent to ${quote.customerEmail}.`,
+        description: `Quote sent to ${emailTo}.`,
       })
-    } catch {
+      setEmailOpen(false)
+    } catch (e) {
       toast({
         title: 'Error',
-        description: 'Failed to send email.',
+        description: e instanceof Error ? e.message : 'Failed to send email.',
         variant: 'destructive',
       })
     } finally {
@@ -251,7 +366,18 @@ export default function QuoteDetailPage() {
             <span className="font-medium capitalize">{quote.source}</span>
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button onClick={() => setEditOpen(true)} variant="outline">
+            <Pencil className="mr-2 h-4 w-4" /> Edit
+          </Button>
+          <Button onClick={handleDuplicate} disabled={duplicating} variant="outline">
+            {duplicating ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Copy className="mr-2 h-4 w-4" />
+            )}{' '}
+            Duplicate
+          </Button>
           <Button
             onClick={handleDownloadPDF}
             disabled={downloading}
@@ -267,16 +393,8 @@ export default function QuoteDetailPage() {
               </>
             )}
           </Button>
-          <Button onClick={handleSendEmail} disabled={sendingEmail} variant="outline">
-            {sendingEmail ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...
-              </>
-            ) : (
-              <>
-                <Mail className="mr-2 h-4 w-4" /> Send by Email
-              </>
-            )}
+          <Button onClick={() => setEmailOpen(true)} variant="outline">
+            <Mail className="mr-2 h-4 w-4" /> Send by Email
           </Button>
         </div>
       </div>
@@ -287,18 +405,33 @@ export default function QuoteDetailPage() {
           {/* Caja de precio */}
           <Card className="border-primary/30 bg-secondary/30">
             <CardContent className="p-6">
-              <div className="flex flex-col items-center gap-2 text-center">
-                <p className="text-sm font-medium text-primary">
-                  ESTIMATED PRICE RANGE
-                </p>
-                <p className="text-4xl font-bold text-primary">
-                  {formatCurrency(quote.minPrice)} –{' '}
-                  {formatCurrency(quote.maxPrice)}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Subject to visual inspection on site
-                </p>
-              </div>
+              {quote.finalPrice ? (
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <p className="text-sm font-medium text-emerald-700">
+                    FINAL PRICE (APPROVED)
+                  </p>
+                  <p className="text-4xl font-bold text-emerald-700">
+                    {formatCurrency(quote.finalPrice)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Estimated range was: {formatCurrency(quote.minPrice)} –{' '}
+                    {formatCurrency(quote.maxPrice)}
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <p className="text-sm font-medium text-primary">
+                    ESTIMATED PRICE RANGE
+                  </p>
+                  <p className="text-4xl font-bold text-primary">
+                    {formatCurrency(quote.minPrice)} –{' '}
+                    {formatCurrency(quote.maxPrice)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Subject to visual inspection on site
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -324,9 +457,7 @@ export default function QuoteDetailPage() {
                 </div>
                 <div>
                   <dt className="text-xs text-muted-foreground">Cleaning Level</dt>
-                  <dd className="mt-1 font-medium capitalize">
-                    {quote.cleaningLevel} Clean
-                  </dd>
+                  <dd className="mt-1 font-medium">{formatLevel(quote.cleaningLevel)}</dd>
                 </div>
                 <div>
                   <dt className="text-xs text-muted-foreground">Square Footage</dt>
@@ -437,7 +568,7 @@ export default function QuoteDetailPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex-1 text-primary"
+                  className="flex-1 text-emerald-600"
                   onClick={() => updateStatus('approved')}
                   disabled={quote.status === 'approved'}
                 >
@@ -471,6 +602,114 @@ export default function QuoteDetailPage() {
           </Card>
         </div>
       </div>
+
+      {/* Dialog de edicion */}
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Pencil className="h-5 w-5 text-primary" /> Edit Quote
+            </DialogTitle>
+            <DialogDescription>
+              Update customer data, status, and set the final price after inspection.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-final">Final Price ($) — leave empty to keep estimate range</Label>
+              <div className="relative">
+                <DollarSign className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="edit-final"
+                  type="number"
+                  placeholder="e.g. 850"
+                  value={editFinalPrice}
+                  onChange={(e) => setEditFinalPrice(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Set this after the on-site inspection to lock the final price.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label>Status</Label>
+              <Select value={editStatus} onValueChange={setEditStatus}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="approved">Approved</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="edit-name">Customer Name</Label>
+                <Input id="edit-name" value={editCustomerName} onChange={(e) => setEditCustomerName(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-phone">Phone</Label>
+                <Input id="edit-phone" value={editCustomerPhone} onChange={(e) => setEditCustomerPhone(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-email">Email</Label>
+                <Input id="edit-email" type="email" value={editCustomerEmail} onChange={(e) => setEditCustomerEmail(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-addr">Project Address</Label>
+                <Input id="edit-addr" value={editProjectAddress} onChange={(e) => setEditProjectAddress(e.target.value)} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-notes">Notes</Label>
+              <Textarea id="edit-notes" rows={3} value={editNotes} onChange={(e) => setEditNotes(e.target.value)} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditOpen(false)}>Cancel</Button>
+            <Button onClick={handleSaveEdit} disabled={saving} className="bg-platinum-primary text-platinum-bright hover:opacity-90">
+              {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog de email */}
+      <Dialog open={emailOpen} onOpenChange={setEmailOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-primary" /> Send Quote by Email
+            </DialogTitle>
+            <DialogDescription>
+              The quote PDF will be attached to a professionally designed email and sent to the recipient.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="email-to">Recipient Email</Label>
+              <Input
+                id="email-to"
+                type="email"
+                placeholder="customer@example.com"
+                value={emailTo}
+                onChange={(e) => setEmailTo(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEmailOpen(false)}>Cancel</Button>
+            <Button onClick={handleSendEmail} disabled={sendingEmail} className="bg-platinum-primary text-platinum-bright hover:opacity-90">
+              {sendingEmail ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
+              Send Email
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

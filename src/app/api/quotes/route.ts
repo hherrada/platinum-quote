@@ -10,7 +10,7 @@ import { authOptions } from '@/lib/auth'
 const createQuoteSchema = z.object({
   propertyType: z.enum(['residential', 'commercial']),
   sqft: z.number().int().positive().max(1000000),
-  cleaningLevel: z.enum(['rough', 'final']),
+  cleaningLevel: z.enum(['rough', 'final', 'both']),
   hasDebris: z.boolean(),
   hasStickers: z.boolean(),
   // Datos del cliente (opcionales en web hasta agendar inspeccion)

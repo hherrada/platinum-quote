@@ -3,7 +3,7 @@
 import { db } from './db'
 
 export type PropertyType = 'residential' | 'commercial'
-export type CleaningLevel = 'rough' | 'final'
+export type CleaningLevel = 'rough' | 'final' | 'both'
 
 export interface QuoteInput {
   propertyType: PropertyType
@@ -25,6 +25,7 @@ export interface PriceRange {
     stickersMax: number
     rateMin: number
     rateMax: number
+    levels: string[] // niveles incluidos en el calculo
   }
 }
 
@@ -32,26 +33,38 @@ export interface PriceRange {
  * Calcula el rango de precios estimado basado en sqft, tipo de propiedad,
  * nivel de limpieza y servicios adicionales (escombros, stickers).
  * Los precios nunca son cerrados: son estimaciones sujetas a inspeccion visual.
+ * Si cleaningLevel es "both", suma las tarifas de rough + final.
  */
 export async function calculatePriceRange(input: QuoteInput): Promise<PriceRange> {
-  // Obtener la tarifa de la matriz de precios
-  const pricing = await db.pricingMatrix.findFirst({
+  // Obtener las tarifas de la matriz de precios
+  const levelsToQuery: ('rough' | 'final')[] =
+    input.cleaningLevel === 'both' ? ['rough', 'final'] : [input.cleaningLevel]
+
+  const pricings = await db.pricingMatrix.findMany({
     where: {
       propertyType: input.propertyType,
-      cleaningLevel: input.cleaningLevel,
+      cleaningLevel: { in: levelsToQuery },
       isActive: true,
     },
   })
 
-  if (!pricing) {
+  if (pricings.length === 0) {
     throw new Error(
       `No pricing found for propertyType=${input.propertyType}, cleaningLevel=${input.cleaningLevel}`
     )
   }
 
-  // Costo base = sqft x tarifa
-  const baseMin = input.sqft * pricing.minRatePerSqft
-  const baseMax = input.sqft * pricing.maxRatePerSqft
+  // Sumar las tarifas de todos los niveles seleccionados
+  let rateMin = 0
+  let rateMax = 0
+  for (const p of pricings) {
+    rateMin += p.minRatePerSqft
+    rateMax += p.maxRatePerSqft
+  }
+
+  // Costo base = sqft x tarifa total
+  const baseMin = input.sqft * rateMin
+  const baseMax = input.sqft * rateMax
 
   // Cargos adicionales
   let debrisMin = 0
@@ -88,8 +101,9 @@ export async function calculatePriceRange(input: QuoteInput): Promise<PriceRange
       debrisMax,
       stickersMin,
       stickersMax,
-      rateMin: pricing.minRatePerSqft,
-      rateMax: pricing.maxRatePerSqft,
+      rateMin,
+      rateMax,
+      levels: levelsToQuery,
     },
   }
 }

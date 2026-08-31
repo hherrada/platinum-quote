@@ -9,6 +9,7 @@ import {
   LogOut,
   Loader2,
   Phone,
+  Settings,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/public/logo'
@@ -18,6 +19,7 @@ const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/quotes/new', label: 'New Quote', icon: FilePlus2 },
   { href: '/admin/pricing', label: 'Pricing Matrix', icon: Settings2 },
+  { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]
 
 export default function AdminLayout({

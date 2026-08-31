@@ -1,6 +1,7 @@
-// API de cotizacion individual: GET, PATCH (cambiar estado / editar)
+// API de cotizacion individual: GET, PATCH (cambiar estado / editar), POST (duplicar)
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { calculatePriceRange } from '@/lib/pricing'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 
@@ -43,6 +44,34 @@ export async function PATCH(
     const { id } = await params
     const body = await req.json()
 
+    // Si se esta duplicando (action: duplicate)
+    if (body.action === 'duplicate') {
+      const original = await db.quote.findUnique({ where: { id } })
+      if (!original) {
+        return NextResponse.json({ error: 'Quote not found' }, { status: 404 })
+      }
+      const duplicated = await db.quote.create({
+        data: {
+          source: 'manual',
+          status: 'pending',
+          propertyType: original.propertyType,
+          sqft: original.sqft,
+          cleaningLevel: original.cleaningLevel,
+          hasDebris: original.hasDebris,
+          hasStickers: original.hasStickers,
+          minPrice: original.minPrice,
+          maxPrice: original.maxPrice,
+          finalPrice: null, // el duplicado empieza sin precio final
+          customerName: original.customerName,
+          customerEmail: original.customerEmail,
+          customerPhone: original.customerPhone,
+          projectAddress: original.projectAddress,
+          notes: original.notes,
+        },
+      })
+      return NextResponse.json({ quote: duplicated }, { status: 201 })
+    }
+
     const allowedFields = [
       'status',
       'customerName',
@@ -52,12 +81,36 @@ export async function PATCH(
       'notes',
       'minPrice',
       'maxPrice',
+      'finalPrice',
+      'propertyType',
+      'sqft',
+      'cleaningLevel',
+      'hasDebris',
+      'hasStickers',
     ]
 
     const updateData: Record<string, unknown> = {}
     for (const field of allowedFields) {
       if (body[field] !== undefined) {
         updateData[field] = body[field]
+      }
+    }
+
+    // Si se cambiaron datos del proyecto que afectan el precio, recalcular
+    const recalcFields = ['propertyType', 'sqft', 'cleaningLevel', 'hasDebris', 'hasStickers']
+    const needsRecalc = recalcFields.some((f) => body[f] !== undefined)
+    if (needsRecalc) {
+      const current = await db.quote.findUnique({ where: { id } })
+      if (current) {
+        const range = await calculatePriceRange({
+          propertyType: (updateData.propertyType as 'residential' | 'commercial') || (current.propertyType as 'residential' | 'commercial'),
+          sqft: (updateData.sqft as number) || current.sqft,
+          cleaningLevel: (updateData.cleaningLevel as 'rough' | 'final' | 'both') || (current.cleaningLevel as 'rough' | 'final' | 'both'),
+          hasDebris: updateData.hasDebris !== undefined ? (updateData.hasDebris as boolean) : current.hasDebris,
+          hasStickers: updateData.hasStickers !== undefined ? (updateData.hasStickers as boolean) : current.hasStickers,
+        })
+        updateData.minPrice = range.minPrice
+        updateData.maxPrice = range.maxPrice
       }
     }
 

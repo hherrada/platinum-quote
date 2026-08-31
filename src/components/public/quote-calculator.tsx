@@ -30,7 +30,7 @@ import {
 } from 'lucide-react'
 
 type PropertyType = 'residential' | 'commercial'
-type CleaningLevel = 'rough' | 'final'
+type CleaningLevel = 'rough' | 'final' | 'both'
 
 interface PriceRange {
   minPrice: number
@@ -44,6 +44,7 @@ interface PriceRange {
     stickersMax: number
     rateMin: number
     rateMax: number
+    levels: string[]
   }
 }
 
@@ -255,7 +256,7 @@ export function QuoteCalculator() {
             <RadioGroup
               value={cleaningLevel}
               onValueChange={(v) => setCleaningLevel(v as CleaningLevel)}
-              className="grid gap-3 sm:grid-cols-2"
+              className="grid gap-3 sm:grid-cols-3"
             >
               <label
                 htmlFor="rough"
@@ -269,8 +270,7 @@ export function QuoteCalculator() {
                 <div className="space-y-1">
                   <span className="block text-sm font-semibold">Rough Clean</span>
                   <span className="block text-xs text-muted-foreground">
-                    Initial cleaning during construction: removal of large debris,
-                    dust, and leftover materials.
+                    Initial cleaning during construction.
                   </span>
                 </div>
               </label>
@@ -286,8 +286,23 @@ export function QuoteCalculator() {
                 <div className="space-y-1">
                   <span className="block text-sm font-semibold">Final Clean</span>
                   <span className="block text-xs text-muted-foreground">
-                    Detailed finishing clean after construction is complete:
-                    windows, floors, fixtures, and detailing.
+                    Finishing clean after construction.
+                  </span>
+                </div>
+              </label>
+              <label
+                htmlFor="both"
+                className={`flex cursor-pointer items-start gap-3 rounded-lg border-2 p-4 transition-all ${
+                  cleaningLevel === 'both'
+                    ? 'border-primary bg-secondary'
+                    : 'border-border hover:border-primary/50'
+                }`}
+              >
+                <RadioGroupItem value="both" id="both" className="mt-1" />
+                <div className="space-y-1">
+                  <span className="block text-sm font-semibold">Both</span>
+                  <span className="block text-xs text-muted-foreground">
+                    Rough + Final clean combined.
                   </span>
                 </div>
               </label>
@@ -387,7 +402,7 @@ export function QuoteCalculator() {
               </p>
               <p className="mt-2 text-xs text-muted-foreground">
                 {propertyType === 'residential' ? 'Residential' : 'Commercial'}{' '}
-                {cleaningLevel === 'rough' ? 'Rough' : 'Final'} Clean
+                {cleaningLevel === 'both' ? 'Rough + Final' : cleaningLevel === 'rough' ? 'Rough' : 'Final'} Clean
               </p>
             </div>
 

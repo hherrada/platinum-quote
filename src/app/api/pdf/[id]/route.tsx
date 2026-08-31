@@ -46,6 +46,7 @@ export async function GET(
       hasStickers: quote.hasStickers,
       minPrice: quote.minPrice,
       maxPrice: quote.maxPrice,
+      finalPrice: quote.finalPrice,
       notes: quote.notes,
       createdAt: quote.createdAt.toISOString(),
       breakdown: range.breakdown,

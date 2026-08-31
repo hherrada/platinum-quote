@@ -32,7 +32,7 @@ import {
 } from 'lucide-react'
 
 type PropertyType = 'residential' | 'commercial'
-type CleaningLevel = 'rough' | 'final'
+type CleaningLevel = 'rough' | 'final' | 'both'
 
 interface PriceRange {
   minPrice: number
@@ -254,7 +254,7 @@ export default function NewQuotePage() {
                       setCleaningLevel(v as CleaningLevel)
                       setEstimate(null)
                     }}
-                    className="grid grid-cols-2 gap-2"
+                    className="grid grid-cols-3 gap-2"
                   >
                     <label
                       className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 p-2.5 text-sm transition-all ${
@@ -264,7 +264,7 @@ export default function NewQuotePage() {
                       }`}
                     >
                       <RadioGroupItem value="rough" id="r-rough" />
-                      Rough Clean
+                      Rough
                     </label>
                     <label
                       className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 p-2.5 text-sm transition-all ${
@@ -274,7 +274,17 @@ export default function NewQuotePage() {
                       }`}
                     >
                       <RadioGroupItem value="final" id="r-final" />
-                      Final Clean
+                      Final
+                    </label>
+                    <label
+                      className={`flex cursor-pointer items-center gap-2 rounded-lg border-2 p-2.5 text-sm transition-all ${
+                        cleaningLevel === 'both'
+                          ? 'border-primary bg-secondary'
+                          : 'border-border'
+                      }`}
+                    >
+                      <RadioGroupItem value="both" id="r-both" />
+                      Both
                     </label>
                   </RadioGroup>
                 </div>
@@ -438,7 +448,9 @@ export default function NewQuotePage() {
                     </div>
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">Level</dt>
-                      <dd className="font-medium capitalize">{cleaningLevel}</dd>
+                      <dd className="font-medium">
+                        {cleaningLevel === 'both' ? 'Rough + Final' : cleaningLevel.charAt(0).toUpperCase() + cleaningLevel.slice(1)}
+                      </dd>
                     </div>
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">SQFT</dt>

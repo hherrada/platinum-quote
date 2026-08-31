@@ -32,13 +32,16 @@ model Quote {
   // Datos del proyecto
   propertyType  String // residential | commercial
   sqft          Int
-  cleaningLevel String // rough | final
+  cleaningLevel String // rough | final | both (both = rough + final combined)
   hasDebris     Boolean
   hasStickers   Boolean
 
   // Rango de precio calculado
   minPrice      Float
   maxPrice      Float
+
+  // Precio final fijo (despues de inspeccion - opcional)
+  finalPrice    Float?
 
   // Datos del cliente (opcional en cotizaciones web hasta agendar inspeccion)
   customerName    String?

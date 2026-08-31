@@ -52,6 +52,7 @@ interface Quote {
   hasStickers: boolean
   minPrice: number
   maxPrice: number
+  finalPrice: number | null
   customerName: string | null
   customerEmail: string | null
   customerPhone: string | null
@@ -310,10 +311,15 @@ export default function AdminDashboardPage() {
                         <TableCell className="tabular-nums">
                           {q.sqft.toLocaleString()}
                         </TableCell>
-                        <TableCell className="capitalize">{q.cleaningLevel}</TableCell>
+                        <TableCell>
+                          {q.cleaningLevel === 'both' ? 'Rough + Final' : q.cleaningLevel.charAt(0).toUpperCase() + q.cleaningLevel.slice(1)}
+                        </TableCell>
                         <TableCell className="font-medium tabular-nums">
-                          {formatCurrency(q.minPrice)} –{' '}
-                          {formatCurrency(q.maxPrice)}
+                          {q.finalPrice ? (
+                            <span className="text-emerald-700 font-bold">{formatCurrency(q.finalPrice)}</span>
+                          ) : (
+                            <>{formatCurrency(q.minPrice)} – {formatCurrency(q.maxPrice)}</>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Badge
