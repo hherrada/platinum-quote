@@ -64,3 +64,9 @@ server.log
 /.agent-ctx/
 /--clip
 *.pid
+# Local SQLite database (production uses Supabase)
+/db/
+
+# Tool results and uploads (sandbox artifacts)
+/tool-results/
+/upload/
