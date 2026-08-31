@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,20 @@ import { Logo } from '@/components/public/logo'
 import { Loader2, LogIn, ArrowLeft, Phone } from 'lucide-react'
 import Link from 'next/link'
 
+// Wrapper con Suspense (requerido por Next.js 16 para useSearchParams)
 export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-platinum-radial">
+        <Loader2 className="h-8 w-8 animate-spin text-platinum-bright" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
+  )
+}
+
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/admin'
