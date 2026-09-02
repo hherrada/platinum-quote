@@ -140,11 +140,6 @@ function LoginForm() {
                 )}
               </Button>
             </form>
-            <div className="mt-4 rounded-lg border border-dashed border-border bg-secondary/30 p-3 text-xs text-muted-foreground">
-              <p className="font-medium text-primary">Demo credentials:</p>
-              <p>Email: admin@platinumcleaning.com</p>
-              <p>Password: admin123</p>
-            </div>
           </CardContent>
         </Card>
       </div>

@@ -36,16 +36,16 @@ async function main() {
   console.log('   ✓ Servicios adicionales creados (debris, stickers)')
 
   // --- Admin ---
-  const hashed = await bcrypt.hash('admin123', 10)
+  const hashed = await bcrypt.hash('Platinum2026!', 10)
   await db.profile.create({
     data: {
-      email: 'admin@platinumcleaning.com',
+      email: 'platinumconst.cleaning@gmail.com',
       name: 'Platinum Admin',
       password: hashed,
       role: 'admin',
     },
   })
-  console.log('   ✓ Usuario admin creado: admin@platinumcleaning.com / admin123')
+  console.log('   ✓ Usuario admin creado: platinumconst.cleaning@gmail.com')
 
   console.log('\n✅ Base de datos de produccion inicializada correctamente')
 }
