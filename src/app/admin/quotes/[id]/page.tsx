@@ -50,6 +50,7 @@ import {
   Pencil,
   Copy,
   DollarSign,
+  Receipt,
 } from 'lucide-react'
 
 interface Quote {
@@ -378,6 +379,14 @@ export default function QuoteDetailPage() {
             )}{' '}
             Duplicate
           </Button>
+          {/* Generate Invoice - solo visible si tiene finalPrice */}
+          {quote.finalPrice && (
+            <Button asChild className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              <Link href={`/admin/invoices/new?quoteId=${quote.id}`}>
+                <Receipt className="mr-2 h-4 w-4" /> Generate Invoice
+              </Link>
+            </Button>
+          )}
           <Button
             onClick={handleDownloadPDF}
             disabled={downloading}

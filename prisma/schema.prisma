@@ -78,3 +78,40 @@ model AdditionalService {
   isActive Boolean  @default(true)
   updatedAt DateTime @updatedAt
 }
+
+// Facturas / invoices (generadas a partir de cotizaciones aprobadas o manuales)
+model Invoice {
+  id            String   @id @default(cuid())
+  number        String   @unique // INV-2026-001
+  quoteId       String?  // cotizacion asociada (null si es manual)
+  status        String   @default("draft") // draft | sent | paid | overdue
+  isDeposit     Boolean  @default(false) // true = 50% deposit invoice
+
+  // Datos del cliente (snapshot al momento de crear)
+  customerName    String
+  customerEmail    String
+  customerPhone    String
+  projectAddress   String
+
+  // Datos del proyecto (snapshot)
+  propertyType    String
+  cleaningLevel   String
+  sqft             Int
+  hasDebris       Boolean
+  hasStickers     Boolean
+
+  // Montos
+  totalAmount     Float // monto total (100%)
+  amountDue       Float // monto a pagar en esta factura (50% o 100%)
+
+  // Fechas
+  issueDate       DateTime @default(now())
+  dueDate         DateTime
+  sentAt          DateTime?
+  paidAt          DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  notes           String?
+}
+
