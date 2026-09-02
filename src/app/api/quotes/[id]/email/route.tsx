@@ -20,7 +20,7 @@ export async function POST(
 
     if (!isEmailConfigured()) {
       return NextResponse.json({
-        error: 'Email not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD environment variables.',
+        error: 'Email not configured. Set RESEND_API_KEY, FROM_EMAIL, and REPLY_TO_EMAIL environment variables.',
       }, { status: 500 })
     }
 

@@ -3,7 +3,7 @@
 //   RESEND_API_KEY=re_xxx  (tu API key de Resend)
 //   FROM_EMAIL=platinum@heroosolutions.com  (dominio verificado en Resend)
 //   REPLY_TO_EMAIL=platinumconst.cleaning@gmail.com  (donde llegan las respuestas)
-import Resend from 'resend'
+import { Resend } from 'resend'
 
 interface EmailAttachment {
   filename: string
