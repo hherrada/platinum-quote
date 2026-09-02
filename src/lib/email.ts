@@ -1,9 +1,9 @@
-// Libreria de envio de emails con Nodemailer + Gmail SMTP
-// Configura las variables de entorno:
-//   GMAIL_USER=tu-email@gmail.com
-//   GMAIL_APP_PASSWORD=tu-app-password-de-16-caracteres
-// (Genera un App Password en https://myaccount.google.com/apppasswords)
-import nodemailer from 'nodemailer'
+// Libreria de envio de emails con Resend API
+// Variables de entorno necesarias:
+//   RESEND_API_KEY=re_xxx  (tu API key de Resend)
+//   FROM_EMAIL=platinum@heroosolutions.com  (dominio verificado en Resend)
+//   REPLY_TO_EMAIL=platinumconst.cleaning@gmail.com  (donde llegan las respuestas)
+import Resend from 'resend'
 
 interface EmailAttachment {
   filename: string
@@ -157,7 +157,7 @@ function buildEmailHTML(params: SendQuoteEmailParams): string {
                 <tr>
                   <td align="center">
                     <a href="tel:+17865127353" style="display:inline-block;background-color:#1A2332;color:#E8ECF0;text-decoration:none;font-size:13px;font-weight:bold;padding:12px 32px;border-radius:6px;letter-spacing:0.5px;">
-                      📞 Call Maria: (786) 512-7353
+                      Call Maria: (786) 512-7353
                     </a>
                   </td>
                 </tr>
@@ -170,7 +170,7 @@ function buildEmailHTML(params: SendQuoteEmailParams): string {
             <td style="background-color:#1A2332;padding:16px 32px;border-top:1px solid #C0C5CD;">
               <div style="font-size:11px;color:#C0C5CD;text-align:center;line-height:1.6;">
                 Platinum Construction Cleaning · Miami, FL<br>
-                (305) 555-0192 · info@platinumcleaning.com · Licensed &amp; Insured
+                (305) 555-0192 · Licensed &amp; Insured
               </div>
               <div style="font-size:9px;color:#9CA3AF;text-align:center;margin-top:8px;">
                 This estimate is subject to visual inspection on site. No price is final until an on-site inspection is completed.
@@ -185,29 +185,28 @@ function buildEmailHTML(params: SendQuoteEmailParams): string {
 </html>`
 }
 
-let transporter: nodemailer.Transporter | null = null
+let resendClient: Resend | null = null
 
-function getTransporter() {
-  if (transporter) return transporter
-  const user = process.env.GMAIL_USER
-  const pass = process.env.GMAIL_APP_PASSWORD
-  if (!user || !pass) {
-    throw new Error('GMAIL_USER and GMAIL_APP_PASSWORD environment variables are required')
+function getResend(): Resend {
+  if (resendClient) return resendClient
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY environment variable is required')
   }
-  transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user, pass },
-  })
-  return transporter
+  resendClient = new Resend(apiKey)
+  return resendClient
 }
 
 export async function sendQuoteEmail(params: SendQuoteEmailParams): Promise<void> {
-  const transport = getTransporter()
+  const resend = getResend()
   const html = buildEmailHTML(params)
+  const fromEmail = process.env.FROM_EMAIL || 'platinum@heroosolutions.com'
+  const replyTo = process.env.REPLY_TO_EMAIL || 'platinumconst.cleaning@gmail.com'
 
-  const mailOptions = {
-    from: `"Platinum Construction Cleaning" <${process.env.GMAIL_USER}>`,
+  const { error } = await resend.emails.send({
+    from: `Platinum Construction Cleaning <${fromEmail}>`,
     to: params.to,
+    replyTo,
     subject: params.finalPrice
       ? `Final Quote #${params.quoteId.slice(-8).toUpperCase()} - Platinum Construction Cleaning`
       : `Your Cleaning Estimate #${params.quoteId.slice(-8).toUpperCase()} - Platinum Construction Cleaning`,
@@ -216,14 +215,15 @@ export async function sendQuoteEmail(params: SendQuoteEmailParams): Promise<void
       {
         filename: params.attachment.filename,
         content: params.attachment.content,
-        contentType: params.attachment.contentType,
       },
     ],
-  }
+  })
 
-  await transport.sendMail(mailOptions)
+  if (error) {
+    throw new Error(`Resend API error: ${error.message}`)
+  }
 }
 
 export function isEmailConfigured(): boolean {
-  return !!(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD)
+  return !!process.env.RESEND_API_KEY
 }
