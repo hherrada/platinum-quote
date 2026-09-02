@@ -86,6 +86,10 @@ export function QuoteCalculator() {
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
 
+  // === ANTISPAM ===
+  const [website, setWebsite] = useState('') // honeypot - debe estar vacio
+  const [formLoadTime] = useState(() => Date.now()) // timestamp para time check
+
   function validateForm(): string | null {
     if (!firstName.trim()) return 'Please enter your first name.'
     if (!lastName.trim()) return 'Please enter your last name.'
@@ -126,6 +130,9 @@ export function QuoteCalculator() {
           customerName,
           customerEmail: email.trim(),
           // El telefono y direccion se pediran despues en la inspeccion
+          // Campos antispam
+          website, // honeypot - debe estar vacio
+          _ts: formLoadTime, // timestamp para time check
         }),
       })
       const data = await res.json()
@@ -474,6 +481,20 @@ export function QuoteCalculator() {
               inspection.
             </AlertDescription>
           </Alert>
+
+          {/* Honeypot antispam - campo oculto invisible para humanos */}
+          <div style={{ position: 'absolute', left: '-9999px', top: '-9999px', opacity: 0, pointerEvents: 'none' }} aria-hidden="true">
+            <label htmlFor="website">Website (leave empty)</label>
+            <input
+              type="text"
+              id="website"
+              name="website"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+            />
+          </div>
 
           {/* CTA principal */}
           <Button

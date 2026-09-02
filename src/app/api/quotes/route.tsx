@@ -23,6 +23,9 @@ const createQuoteSchema = z.object({
   projectAddress: z.string().optional(),
   source: z.enum(['web', 'manual']).default('web'),
   notes: z.string().optional(),
+  // Campos antispam
+  website: z.string().optional(), // honeypot - debe estar vacio
+  _ts: z.number().optional(), // timestamp del formulario
 })
 
 // POST: crear cotizacion (publico y manual)
@@ -39,6 +42,21 @@ export async function POST(req: NextRequest) {
     }
 
     const data = parsed.data
+
+    // === ANTISPAM CHECKS (solo para web) ===
+    if (data.source === 'web') {
+      // 1. Honeypot: si el campo "website" tiene contenido, es un bot
+      if (data.website && data.website.trim().length > 0) {
+        return NextResponse.json({ quote: { id: 'spam-rejected' } }, { status: 201 })
+      }
+      // 2. Time check: si el formulario se envio en menos de 2 segundos, es un bot
+      if (data._ts) {
+        const elapsed = Date.now() - data._ts
+        if (elapsed < 2000) {
+          return NextResponse.json({ quote: { id: 'spam-rejected' } }, { status: 201 })
+        }
+      }
+    }
 
     // Si es manual, requerir auth y datos del cliente
     if (data.source === 'manual') {
